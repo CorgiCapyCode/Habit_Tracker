@@ -2,12 +2,9 @@
 Starts the application.
 
 ----- Description -----
-This module starts the application, if it is started as the main file
-It sets up the database and creates a session, so that it is possible to
-interact with the database (e.g. change values).
-The program will ask if the standard entries should be added to the database
-using a simple input line.
-Afterwards the MainWindow instance will be created.
+This module starts the application when executed as the main file.
+It sets up the database, creates a session for database interaction, asks
+whether standard habits should be added, and then starts the main window.
 """
 
 from db.db_functions import add_standard_habits_to_db
@@ -45,6 +42,7 @@ def main():
         0, lambda: loop_for_update_due_date(session=session, main_window=app)
     )
     app.main_root.mainloop()
+
 
 if __name__ == "__main__":
     main()

@@ -11,6 +11,8 @@ from tkinter import ttk
 
 from db.db_filter_functions import filter_for_history_entries
 
+MAX_HISTORY_TIMESPAN_DAYS = 36500
+
 
 class ShowHabitHistory:
     """
@@ -19,7 +21,7 @@ class ShowHabitHistory:
     ----- Description -----
     This class is used to show the habit history. Therefore it has methods to
     load the data.
-    IT will offer different filters to the user as well.
+    It will offer different filters to the user as well.
 
     ----- Attributes -----
     session (Session):      Containing the reference to the database session.
@@ -32,14 +34,14 @@ class ShowHabitHistory:
 
     ----- Methods -----
     click_close_window:             Closing the window.
-    click_reset_filter_settings:    Reseting the filter to default
+    click_reset_filter_settings:    Resetting the filter to default
                                     (all entries).
-    click_show_fails_completed:     Swtiches between completed / not completed
+    click_show_fails_completed:     Switches between completed / not completed
                                     / both.
     click_show_timespan_only:       Using a user input to create a timespan
                                     for the history.
     on_releasing_key:               Function used to limit the entry for the
-                                    timespan to 36500 days (ca. 100 years).
+                                    timespan to the configured maximum.
     validation_of_entry_data:       Checking if an input is a digit or an empty
                                     string (meaning: nothing).
     load_history_data_to_table:     Loads the data from the database to the
@@ -123,7 +125,8 @@ class ShowHabitHistory:
             self.subframe_filter_buttons,
             text=(
                 "No entry or 0 means default (None),"
-                "\nMax. value is 36500 days (approx. 100 years)"
+                f"\nMax. value is {MAX_HISTORY_TIMESPAN_DAYS} days "
+                "(approx. 100 years)"
             ),
             justify="left",
         )
@@ -138,10 +141,8 @@ class ShowHabitHistory:
             self.subframe_history_table, column=column_lst, show="headings"
         )
         for entry in column_lst:
-            formated_heading = " ".join(entry.split("_")).capitalize()
-            self.history_table.heading(
-                entry, text=formated_heading, anchor=tk.W
-            )
+            formatted_heading = " ".join(entry.split("_")).capitalize()
+            self.history_table.heading(entry, text=formatted_heading, anchor=tk.W)
             self.history_table.column(entry, minwidth=50)
         self.load_history_data_to_table()
 
@@ -156,18 +157,14 @@ class ShowHabitHistory:
             row=0, column=1, **widget_properties
         )
         self.entry_timespan.grid(row=0, column=2, **widget_properties)
-        self.show_timespan_only_filter_button.grid(
-            row=0, column=3, **widget_properties
-        )
+        self.show_timespan_only_filter_button.grid(row=0, column=3, **widget_properties)
         self.timespan_information.grid(row=0, column=4, **widget_properties)
 
         self.history_table.grid(
             row=0, column=0, columnspan=4, padx=10, pady=10, sticky="nsew"
         )
 
-        self.close_window_button.grid(
-            row=0, column=0, padx=10, pady=10, sticky="w"
-        )
+        self.close_window_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
     def click_close_window(self):
         """
@@ -180,7 +177,7 @@ class ShowHabitHistory:
         Resets the filter settings to the default values.
 
         ----- Description -----
-        This functions resets the filter settings to the default values to show
+        This function resets the filter settings to the default values to show
         all habit history entries.
         Further it will update the table to show the new entries.
         """
@@ -215,19 +212,19 @@ class ShowHabitHistory:
             self.timespan = None
         else:
             user_input = int(self.entry_timespan.get())
-            self.timespan = min(user_input, 36500)
+            self.timespan = min(user_input, MAX_HISTORY_TIMESPAN_DAYS)
         self.update_table()
 
     def on_releasing_key(self, not_used_event):
         """
-        This function controlls the user input in the entry field for the
+        This function controls the user input in the entry field for the
         timespan.
 
         ----- Description -----
         This function takes the user input after releasing the keyboard and
-        checks it for being a digit as well as if the total value is not above
-        36500.
-        If the value exceeds the limit, then the value is set to 36500 and the
+        checks it for being a digit as well as if the total value is within the
+        configured limit.
+        If the value exceeds the limit, then it is set to that limit and the
         display is updated accordingly.
 
         ----- Arguments -----
@@ -238,13 +235,9 @@ class ShowHabitHistory:
         """
         value_after_pressing = self.entry_timespan.get()
         if value_after_pressing.isdigit():
-            if value_after_pressing.isdigit():
-                value_after_pressing = int(value_after_pressing)
-            else:
-                value_after_pressing = 0
-
-            value_after_pressing = min(value_after_pressing, 36500)
-
+            value_after_pressing = min(
+                int(value_after_pressing), MAX_HISTORY_TIMESPAN_DAYS
+            )
             self.entry_timespan.delete(0, tk.END)
             self.entry_timespan.insert(0, str(value_after_pressing))
 
@@ -253,16 +246,16 @@ class ShowHabitHistory:
         This function is used to validate if the user input is a digit.
 
         ----- Arguments -----
-        P (str):    Containg the key-value that has been pressed.
+        P (str):    Containing the key-value that has been pressed.
 
         ----- Returns -----
         boolean (bool):   Returns True or False
         """
-        return bool(P.isdigit() is True or P == "" or P == "")
+        return P.isdigit() or P == ""
 
     def load_history_data_to_table(self):
         """
-        This functions is used to load the history entries in the database into
+        This function is used to load the history entries in the database into
         the table.
 
         ----- Description -----
@@ -281,10 +274,8 @@ class ShowHabitHistory:
             else:
                 completion_status = "Completed in time"
 
-            display_date_time = (
-                table_entry
-                .fail_or_completion_date_time
-                .strftime("%Y/%m/%d - %H:%M:%S")
+            display_date_time = table_entry.fail_or_completion_date_time.strftime(
+                "%Y/%m/%d - %H:%M:%S"
             )
 
             self.history_table.insert(

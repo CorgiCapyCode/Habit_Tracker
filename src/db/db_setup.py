@@ -1,4 +1,4 @@
-""" This module contains the basis for the database.
+"""This module contains the basis for the database.
 
 ----- Description -----
 
@@ -6,46 +6,44 @@ This module creates the base class for the habit classes.
 It further contains functions to create a database or connect to an existing
 one and creates a session for it.
 
------ Classes - only if not empty -----
+----- Classes -----
 BaseClass:  Basic class from SQLAlchemy.
 
 ----- Functions -----
-start_db:           Checks if the database is existing and creats it if it is
-                    necessary.
+start_db:           Checks if the database exists and creates it if necessary.
 start_db_session:   Starts the session that can be used to interact with the
                     database.
 """
 
 import os
 
-from sqlalchemy import create_engine as sqla_create_engine
-from sqlalchemy.ext.declarative import declarative_base as sqla_declarative_base
-from sqlalchemy.orm import sessionmaker as sqla_sessionmaker
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-BaseClass = sqla_declarative_base()
+DB_FILE = "habit_tracker.db"
 
-def start_db(log: bool = False):
+BaseClass = declarative_base()
+
+
+def start_db(log: bool = False) -> Engine:
     """
     Starts the database and creates one, if not existing
 
     ----- Arguments -----
     log (bool): Sets the status of echo. With log = False the database will not
-                dispaly all information in the command line (default: False).
+                display all information in the command line (default: False).
 
     ----- Returns -----
     engine (Engine):    The connection to the database and starting point to
                         start a session.
     """
-    db_file = "habit_tracker.db"
-    if not os.path.isfile(db_file) is None:
-        engine = sqla_create_engine("sqlite:///habit_tracker.db", echo=log)
-        BaseClass.metadata.create_all(bind=engine)
-    else:
-        engine = sqla_create_engine("sqlite:///habit_tracker.db", echo=log)
-
+    engine = create_engine(f"sqlite:///{DB_FILE}", echo=log)
+    if not os.path.isfile(DB_FILE):
+        BaseClass.metadata.create_all(engine)
     return engine
 
-def start_db_session(engine):
+
+def start_db_session(engine: Engine) -> Session:
     """
     Starts a session based on the engine
 
@@ -55,6 +53,6 @@ def start_db_session(engine):
     ----- Returns -----
     session (Session):  Containing the reference to the database session.
     """
-    Session = sqla_sessionmaker(engine)
-    session = Session()
+    session_factory = sessionmaker(engine)
+    session = session_factory()
     return session

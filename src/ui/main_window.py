@@ -15,7 +15,7 @@ from tkinter import ttk
 
 from db.db_filter_functions import filter_db_for_names, filter_habits
 from db.db_functions import delete_entries_from_db
-from db.db_object_functions import change_active_passiv_status, manage_tracking_status
+from db.db_object_functions import change_active_passive_status, manage_tracking_status
 from ui.create_new_change_habit_window import CreateChangeHabitWindow
 from ui.habit_history_window import ShowHabitHistory
 from ui.pop_up_windows import InputMessageWindow, ShowHighscoreWindow
@@ -30,7 +30,7 @@ class MainWindow:
     The main window contains three sections:
     1. Buttons to create new habits, adjust filter settings and show highscore
     as well as history data.
-    2. A table containg habits from the database according to the filter
+    2. A table containing habits from the database according to the filter
     settings made.
     3. Buttons to adjust selected habits. E.g. mark them as completed.
 
@@ -50,7 +50,7 @@ class MainWindow:
     click_show_history:             Opens a window to show the history.
     click_filter_active:            Alters the filter between all, only active
                                     and only passive.
-    click_show_period:              Setts the filter setting to the clicked
+    click_show_period:              Sets the filter setting to the clicked
                                     period.
     click_reset_filter:             Resets the filter settings to default.
     click_change_active_passive:    Calls functions to switch the active
@@ -64,12 +64,12 @@ class MainWindow:
                                     table.
     update_data_in_table:           Updates the data in the table.
     catch_selected_entries:         Used to get the habit names of the
-                                    seleceted entries in the table.
+                                    selected entries in the table.
     """
 
     def __init__(self, session):
         """
-        Constructor for the CreateChangeHabitWindow class.
+        Constructor for the MainWindow class.
 
         ----- Arguments -----
         session (Session):  Containing the reference to the database session.
@@ -79,22 +79,16 @@ class MainWindow:
         self.main_root.geometry("950x400")
         self.main_root.title("Habit Tracker")
         self.main_root.grid_columnconfigure(0, weight=1)
-        self.main_root.wm_protocol(
-            "WM_DELETE_WINDOW", self.click_close_application
-        )
+        self.main_root.wm_protocol("WM_DELETE_WINDOW", self.click_close_application)
 
         self.main_frame = tk.Frame(self.main_root)
         self.main_frame.grid(sticky="nsew")
         self.subframe_top_buttons = tk.Frame(self.main_frame)
         self.subframe_top_buttons.grid(row=0, column=0, sticky="w")
         self.subframe_table = tk.Frame(self.main_frame)
-        self.subframe_table.grid(
-            row=1, column=0, padx=10, pady=10, sticky="nsew"
-        )
+        self.subframe_table.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
         self.subframe_low_buttons = tk.Frame(self.main_frame)
-        self.subframe_low_buttons.grid(
-            row=2, column=0, padx=10, pady=10, sticky="w"
-        )
+        self.subframe_low_buttons.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(1, weight=1)
@@ -135,7 +129,7 @@ class MainWindow:
             text="Reset all filters",
             command=self.click_reset_filter,
         )
-        self.show_active_passiv_habits_button = tk.Button(
+        self.show_active_passive_habits_button = tk.Button(
             self.subframe_top_buttons,
             text="Show tracked/not tracked habits",
             command=self.click_filter_active,
@@ -147,7 +141,7 @@ class MainWindow:
         )
         self.show_every_other_day_button = tk.Button(
             self.subframe_top_buttons,
-            text="Show evey other day tracked habits",
+            text="Show every other day tracked habits",
             command=lambda: self.click_show_period(2),
         )
         self.show_weekly_button = tk.Button(
@@ -193,8 +187,8 @@ class MainWindow:
             self.subframe_table, column=column_lst, show="headings"
         )
         for entry in column_lst:
-            formated_heading = " ".join(entry.split("_")).capitalize()
-            self.habit_table.heading(entry, text=formated_heading, anchor=tk.W)
+            formatted_heading = " ".join(entry.split("_")).capitalize()
+            self.habit_table.heading(entry, text=formatted_heading, anchor=tk.W)
             self.habit_table.column(entry, minwidth=50, width=50)
         self.load_data_to_table()
 
@@ -202,7 +196,7 @@ class MainWindow:
             self.create_new_habit_button,
             self.show_highscore_button,
             self.show_history_button,
-            self.close_application_button
+            self.close_application_button,
         ]
         column_number = [0, 1, 2, 4]
         for i, widget in enumerate(first_row_widgets):
@@ -210,10 +204,10 @@ class MainWindow:
 
         second_row_widgets = [
             self.reset_all_filters_button,
-            self.show_active_passiv_habits_button,
+            self.show_active_passive_habits_button,
             self.show_daily_button,
             self.show_every_other_day_button,
-            self.show_weekly_button
+            self.show_weekly_button,
         ]
         for i, widget in enumerate(second_row_widgets):
             widget.grid(row=1, column=i, **widget_properties)
@@ -226,7 +220,7 @@ class MainWindow:
             self.change_active_button,
             self.change_tracking_status_button,
             self.change_habit_button,
-            self.delete_habit_button
+            self.delete_habit_button,
         ]
         for i, widget in enumerate(fourth_row_widgets):
             widget.grid(row=0, column=i, **widget_properties)
@@ -237,7 +231,7 @@ class MainWindow:
         habit.
 
         ----- Description -----
-        This functions does not use an existing habit object to pass to the
+        This function does not use an existing habit object to pass to the
         class.
         By passing None for the habit object, the class will create an empty
         window to create a new habit, instead of adjusting an existing one.
@@ -289,7 +283,7 @@ class MainWindow:
         Gets the period number and sets the filter accordingly.
 
          ----- Description -----
-         Receives the arguemnt from the button and uses it to set the period
+         Receives the argument from the button and uses it to set the period
          filter.
          Calls the function to update the table.
 
@@ -314,9 +308,7 @@ class MainWindow:
         """
         selected_names = self.catch_selected_entries()
         if selected_names:
-            change_active_passiv_status(
-                session=self.session, names=selected_names
-            )
+            change_active_passive_status(session=self.session, names=selected_names)
             self.update_data_in_table()
 
     def click_change_tracking_status(self):
@@ -344,9 +336,7 @@ class MainWindow:
             )
             for habit_entry in habit_entries:
                 CreateChangeHabitWindow(
-                    main_window=self,
-                    session=self.session,
-                    habit_object=habit_entry
+                    main_window=self, session=self.session, habit_object=habit_entry
                 )
 
     def click_delete_habit(self):
@@ -355,14 +345,12 @@ class MainWindow:
         """
         selected_names = self.catch_selected_entries()
         if selected_names:
-            delete_entries_from_db(
-                session=self.session, habit_names=selected_names
-            )
+            delete_entries_from_db(session=self.session, habit_names=selected_names)
             self.update_data_in_table()
 
     def load_data_to_table(self):
         """
-        This functions is used to load the habit entries in the database into
+        This function is used to load the habit entries in the database into
         the table.
 
         ----- Description -----

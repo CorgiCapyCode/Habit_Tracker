@@ -1,24 +1,28 @@
-'''
+"""
 This module is used to load sample data to the database.
 
 ----- Description -----
-This module deletes all entries from the existing database and adds then the sample data.
+This module deletes all entries from the existing database and then adds the sample data.
 
 ----- Functions -----
 add_sample_data_to_habits:
 add_sample_entries_to_history:
-'''
+"""
 
 import datetime
 import sys
-from random import randint as rint
+from random import randint
+
+from sqlalchemy.orm import Session
 
 from db.db_functions import add_new_entry_to_db
 from db.db_setup import start_db, start_db_session
 from habit_classes import Habit, HabitHistory
 
+SAMPLE_DUE_DATE = datetime.date(2099, 12, 1)
 
-def add_sample_data_to_habits(session, data_lst):
+
+def add_sample_data_to_habits(session: Session, data_lst: list) -> None:
     name = data_lst[0]
     description = data_lst[1]
     period = data_lst[2]
@@ -44,22 +48,30 @@ def add_sample_data_to_habits(session, data_lst):
         habit_object.habit_next_due = next_due
     session.commit()
 
-def add_sample_entries_to_history(session, data_lst):
+
+def add_sample_entries_to_history(session: Session, data_lst: list) -> None:
     name = data_lst[0]
     fail_or_completion_date_time = data_lst[1]
     corresponding_due_date = data_lst[2]
     type_of_completion = data_lst[3]
-    history_entry = HabitHistory(name, fail_or_completion_date_time, corresponding_due_date, type_of_completion)
+    history_entry = HabitHistory(
+        name, fail_or_completion_date_time, corresponding_due_date, type_of_completion
+    )
     session.add(history_entry)
     session.commit()
 
+
 if __name__ == "__main__":
-    user_input = input("If you want to delete all current data and replace it with sample data type yes:   ")
+    user_input = input(
+        "If you want to delete all current data and replace it with sample data type yes:   "
+    )
     if user_input != "yes":
         print("Nothing changed")
         sys.exit()
 
-    user_input_security = input("LAST WARNING: THIS WILL DELTE ALL DATA. Are you sure? If so type YES:   ")
+    user_input_security = input(
+        "LAST WARNING: THIS WILL DELETE ALL DATA. Are you sure? If so type YES:   "
+    )
     if user_input_security != "YES":
         print("Nothing changed")
         sys.exit()
@@ -72,11 +84,71 @@ if __name__ == "__main__":
     session.commit()
 
     habits_to_add = [
-        ["Clean Apartment", "Clean everything",     7, True, True, datetime.date(2023, 10, 1), datetime.date(2023, 10, 1),  4, 4, 0, datetime.date(2099, 12, 1)],
-        ["Do Sports", "Go to training",             2, False, False, datetime.date(2023, 10, 1), None,                      0, 0, 0, None],
-        ["Code in Python", "Work on Python skills", 1, True, True, datetime.date(2023, 10, 1), datetime.date(2023, 10, 1),  3, 17, 4, datetime.date(2099, 12, 1)],
-        ["Learn Spanish", "Spanish classes or hw",  2, True, True, datetime.date(2023, 10, 1), datetime.date(2023, 10, 2),  2, 11, 1, datetime.date(2099, 12, 1)],
-        ["Water plants", "Water plants",            7, True, False, datetime.date(2023, 10, 1), datetime.date(2023, 10, 3), 4, 4, 0, datetime.date(2099, 12, 1)],
+        [
+            "Clean Apartment",
+            "Clean everything",
+            7,
+            True,
+            True,
+            datetime.date(2023, 10, 1),
+            datetime.date(2023, 10, 1),
+            4,
+            4,
+            0,
+            SAMPLE_DUE_DATE,
+        ],
+        [
+            "Do Sports",
+            "Go to training",
+            2,
+            False,
+            False,
+            datetime.date(2023, 10, 1),
+            None,
+            0,
+            0,
+            0,
+            None,
+        ],
+        [
+            "Code in Python",
+            "Work on Python skills",
+            1,
+            True,
+            True,
+            datetime.date(2023, 10, 1),
+            datetime.date(2023, 10, 1),
+            3,
+            17,
+            4,
+            SAMPLE_DUE_DATE,
+        ],
+        [
+            "Learn Spanish",
+            "Spanish classes or hw",
+            2,
+            True,
+            True,
+            datetime.date(2023, 10, 1),
+            datetime.date(2023, 10, 2),
+            2,
+            11,
+            1,
+            SAMPLE_DUE_DATE,
+        ],
+        [
+            "Water plants",
+            "Water plants",
+            7,
+            True,
+            False,
+            datetime.date(2023, 10, 1),
+            datetime.date(2023, 10, 3),
+            4,
+            4,
+            0,
+            SAMPLE_DUE_DATE,
+        ],
     ]
     for habit in habits_to_add:
         add_sample_data_to_habits(session, habit)
@@ -87,27 +159,39 @@ if __name__ == "__main__":
     habit_history_1 = [
         [
             habit_1.habit_name,
-            datetime.datetime(2023, 10, 6, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_1.habit_start_date + datetime.timedelta(days=habit_1.habit_period * 1),
-            True
+            datetime.datetime(
+                2023, 10, 6, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_1.habit_start_date
+            + datetime.timedelta(days=habit_1.habit_period * 1),
+            True,
         ],
         [
             habit_1.habit_name,
-            datetime.datetime(2023, 10, 9, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_1.habit_start_date + datetime.timedelta(days=habit_1.habit_period * 2),
-            True
+            datetime.datetime(
+                2023, 10, 9, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_1.habit_start_date
+            + datetime.timedelta(days=habit_1.habit_period * 2),
+            True,
         ],
         [
             habit_1.habit_name,
-            datetime.datetime(2023, 10, 17, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_1.habit_start_date + datetime.timedelta(days=habit_1.habit_period * 3),
-            True
+            datetime.datetime(
+                2023, 10, 17, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_1.habit_start_date
+            + datetime.timedelta(days=habit_1.habit_period * 3),
+            True,
         ],
         [
             habit_1.habit_name,
-            datetime.datetime(2023, 10, 28, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_1.habit_start_date + datetime.timedelta(days=habit_1.habit_period * 4),
-            True
+            datetime.datetime(
+                2023, 10, 28, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_1.habit_start_date
+            + datetime.timedelta(days=habit_1.habit_period * 4),
+            True,
         ],
     ]
 
@@ -115,287 +199,425 @@ if __name__ == "__main__":
     habit_history_2 = [
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 1, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 1),
-            True
+            datetime.datetime(
+                2023, 10, 1, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 1),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 2, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 2),
-            True
+            datetime.datetime(
+                2023, 10, 2, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 2),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 3, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 3),
-            True
+            datetime.datetime(
+                2023, 10, 3, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 3),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 4, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 4),
-            True
+            datetime.datetime(
+                2023, 10, 4, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 4),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 5, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 5),
-            True
+            datetime.datetime(
+                2023, 10, 5, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 5),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 6, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 6),
-            True
+            datetime.datetime(
+                2023, 10, 6, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 6),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 7, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 7),
-            True
+            datetime.datetime(
+                2023, 10, 7, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 7),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 8, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 8),
-            True
+            datetime.datetime(
+                2023, 10, 8, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 8),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 9, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 9),
-            True
+            datetime.datetime(
+                2023, 10, 9, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 9),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 10, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 10),
-            True
+            datetime.datetime(
+                2023, 10, 10, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 10),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 11, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 11),
-            True
+            datetime.datetime(
+                2023, 10, 11, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 11),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 12, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 12),
-            True
+            datetime.datetime(
+                2023, 10, 12, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 12),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 13, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 13),
-            True
+            datetime.datetime(
+                2023, 10, 13, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 13),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 14, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 14),
-            True
+            datetime.datetime(
+                2023, 10, 14, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 14),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 15, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 15),
-            True
+            datetime.datetime(
+                2023, 10, 15, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 15),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 16, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 16),
-            True
+            datetime.datetime(
+                2023, 10, 16, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 16),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 17, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 17),
-            True
+            datetime.datetime(
+                2023, 10, 17, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 17),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 19, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 18),
-            False
+            datetime.datetime(
+                2023, 10, 19, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 18),
+            False,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 19, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 19),
-            True
+            datetime.datetime(
+                2023, 10, 19, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 19),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 21, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 20),
-            False
+            datetime.datetime(
+                2023, 10, 21, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 20),
+            False,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 21, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 21),
-            True
+            datetime.datetime(
+                2023, 10, 21, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 21),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 22, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 22),
-            True
+            datetime.datetime(
+                2023, 10, 22, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 22),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 24, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 23),
-            False
+            datetime.datetime(
+                2023, 10, 24, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 23),
+            False,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 24, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 24),
-            True
+            datetime.datetime(
+                2023, 10, 24, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 24),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 25, rint(0, 24), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 25),
-            False
+            datetime.datetime(
+                2023, 10, 25, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 25),
+            False,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 26, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 26),
-            True
+            datetime.datetime(
+                2023, 10, 26, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 26),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 27, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 27),
-            True
+            datetime.datetime(
+                2023, 10, 27, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 27),
+            True,
         ],
         [
             habit_2.habit_name,
-            datetime.datetime(2023, 10, 28, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_2.habit_start_date + datetime.timedelta(days=habit_2.habit_period * 28),
-            True
+            datetime.datetime(
+                2023, 10, 28, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_2.habit_start_date
+            + datetime.timedelta(days=habit_2.habit_period * 28),
+            True,
         ],
-   ]
+    ]
 
     habit_3 = habits[3]
     habit_history_3 = [
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 3, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 1),
-            True
+            datetime.datetime(
+                2023, 10, 3, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 1),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 5, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 2),
-            True
+            datetime.datetime(
+                2023, 10, 5, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 2),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 7, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 3),
-            True
+            datetime.datetime(
+                2023, 10, 7, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 3),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 9, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 4),
-            True
+            datetime.datetime(
+                2023, 10, 9, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 4),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 11, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 5),
-            True
+            datetime.datetime(
+                2023, 10, 11, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 5),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 13, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 6),
-            True
+            datetime.datetime(
+                2023, 10, 13, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 6),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 15, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 7),
-            True
+            datetime.datetime(
+                2023, 10, 15, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 7),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 17, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 8),
-            True
+            datetime.datetime(
+                2023, 10, 17, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 8),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 19, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 9),
-            True
+            datetime.datetime(
+                2023, 10, 19, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 9),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 21, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 10),
-            True
+            datetime.datetime(
+                2023, 10, 21, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 10),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 23, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 11),
-            True
+            datetime.datetime(
+                2023, 10, 23, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 11),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 26, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 12),
-            False
+            datetime.datetime(
+                2023, 10, 26, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 12),
+            False,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 27, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 13),
-            True
+            datetime.datetime(
+                2023, 10, 27, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 13),
+            True,
         ],
         [
             habit_3.habit_name,
-            datetime.datetime(2023, 10, 29, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_3.habit_start_date + datetime.timedelta(days=habit_3.habit_period * 14),
-            True
+            datetime.datetime(
+                2023, 10, 29, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_3.habit_start_date
+            + datetime.timedelta(days=habit_3.habit_period * 14),
+            True,
         ],
-   ]
+    ]
 
     habit_4 = habits[4]
     habit_history_4 = [
         [
             habit_4.habit_name,
-            datetime.datetime(2023, 10, 6, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_4.habit_start_date + datetime.timedelta(days=habit_4.habit_period * 1),
-            True
+            datetime.datetime(
+                2023, 10, 6, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_4.habit_start_date
+            + datetime.timedelta(days=habit_4.habit_period * 1),
+            True,
         ],
         [
             habit_4.habit_name,
-            datetime.datetime(2023, 10, 9, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_4.habit_start_date + datetime.timedelta(days=habit_4.habit_period * 2),
-            True
+            datetime.datetime(
+                2023, 10, 9, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_4.habit_start_date
+            + datetime.timedelta(days=habit_4.habit_period * 2),
+            True,
         ],
         [
             habit_4.habit_name,
-            datetime.datetime(2023, 10, 17, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_4.habit_start_date + datetime.timedelta(days=habit_4.habit_period * 3),
-            True
+            datetime.datetime(
+                2023, 10, 17, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_4.habit_start_date
+            + datetime.timedelta(days=habit_4.habit_period * 3),
+            True,
         ],
         [
             habit_4.habit_name,
-            datetime.datetime(2023, 10, 28, rint(0, 23), rint(0, 59), rint(0, 59)),
-            habit_4.habit_start_date + datetime.timedelta(days=habit_4.habit_period * 4),
-            True
+            datetime.datetime(
+                2023, 10, 28, randint(0, 23), randint(0, 59), randint(0, 59)
+            ),
+            habit_4.habit_start_date
+            + datetime.timedelta(days=habit_4.habit_period * 4),
+            True,
         ],
     ]
     for entry in habit_history_1:

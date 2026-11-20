@@ -37,7 +37,7 @@ class Habit(BaseClass):
                                     unique.
     habit_description (str):        Describing the habit in more detail.
     habit_period (int):             Representing the periodicity of the habit.
-    habit_active_status (bool):     Showing if a habit is activly tracked or
+    habit_active_status (bool):     Showing if a habit is actively tracked or
                                     not.
     habit_tracking_status (bool):   Showing if a habit is completed within its
                                     time.
@@ -65,9 +65,7 @@ class Habit(BaseClass):
     habit_creation_date = sqla_Column("habit_creation_date", sqla_Date)
     habit_start_date = sqla_Column("habit_start_date", sqla_Date)
     habit_current_streak = sqla_Column("habit_current_streak", sqla_Integer)
-    habit_highscore_streak = sqla_Column(
-        "habit_highscore_streak", sqla_Integer
-    )
+    habit_highscore_streak = sqla_Column("habit_highscore_streak", sqla_Integer)
     habit_total_fails = sqla_Column("habit_total_fails", sqla_Integer)
     habit_next_due = sqla_Column("habit_next_due", sqla_Date)
 
@@ -86,7 +84,7 @@ class Habit(BaseClass):
                                     unique.
         habit_description (str):    Describing the habit in more detail.
         habit_period (int):         Representing the periodicity of the habit.
-        habit_active_status (bool): Showing if a habit is activly tracked or
+        habit_active_status (bool): Showing if a habit is actively tracked or
                                     not.
         """
         self.habit_name = habit_name
@@ -101,6 +99,7 @@ class Habit(BaseClass):
         self.habit_total_fails = 0
         self.habit_next_due = None
 
+
 class HabitHistory(BaseClass):
     """
     This class is a representation of the habit history.
@@ -109,13 +108,13 @@ class HabitHistory(BaseClass):
     This class is for documentation when a habit has been completed or failed
     to be completed in time.
 
-    ----- Attributes - onyl if not empty -----
+    ----- Attributes -----
     habit_id (int):                 This is an id that is used to be the
                                     primary_key. It increments automatically.
     habit_key (str):                This is the ForeignKey to the other table
                                     and represents the name of the
                                     corresponding habit.
-    fail_or_conpletion_date_time
+    fail_or_completion_date_time
     (datetime):                     This documents the date and time when a
                                     habit has been completed or missed to be
                                     completed in time.
@@ -131,10 +130,7 @@ class HabitHistory(BaseClass):
         "entry_id", sqla_Integer, primary_key=True, autoincrement=True
     )
     habit_key = sqla_Column(
-        "habit_key",
-        sqla_String,
-        sqla_ForeignKey("habit.habit_name"),
-        nullable=False
+        "habit_key", sqla_String, sqla_ForeignKey("habit.habit_name"), nullable=False
     )
     fail_or_completion_date_time = sqla_Column(
         "fail_or_completion_date_time", sqla_DateTime
@@ -152,11 +148,11 @@ class HabitHistory(BaseClass):
         """
         Initialize a new habit history object.
 
-        ----- Arguments - onyl if not empty -----
+        ----- Arguments -----
         habit_key (str):                This is the ForeignKey to the other
                                         table and represents the name of the
                                         corresponding habit.
-        fail_or_conpletion_date_time
+        fail_or_completion_date_time
         (datetime):                     This documents the date and time when a
                                         habit has been completed or missed to
                                         be completed in time.

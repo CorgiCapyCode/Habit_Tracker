@@ -1,28 +1,28 @@
 # Error Codes
-## Successfull
-0:		Habit Successfully added to the database  
-301:	Name of habit changed  
-302:	Description of habit changed  
-303:	Periodicity of habit changed  
-304:	Status for active of habit changed  
-## WARNINGS
-100:	WARNING: Name was converted to a string  
-101:	WARNING: Description was converted to a string  
-201:	WARNING: Habit already markes as complete for this due date  
-401:	WARNING: No name changed  
-402:	WARNING: No description changed  
-403:	WARNING: No periodicity changed  
-404:	WARNING: No status for active chagned  
-411:	WARNING: Description is None. Set to default  
-412:	WARNING: Periodicity is None or empty. Set to default 1  
-413:	WARNING: Active Status is None or empty. Set to default False  
-## ERROR
-1:		ERROR: Habit with this name already existing  
-112:	ERROR: Status for active was not of type boolean. No data added  
-113:	ERROR: Periodicity was not of type integer. No data added  
-114:	ERROR: Name cannot be None or empty  
-120:	ERROR: Standard Periodicty does not only contain integers  
-121:	ERROR: Standard status for active does not only contain boolean  
-122:	ERROR: Standad lists have different length  
-123:	ERROR: Not all inputs are lists  
-200:	ERROR: Habit tracking status cannot be changed, habit marked as inactive  
+
+| Code | Level | Message |
+| --- | --- | --- |
+| 0 | Success | Habit successfully added to the database. |
+| 1 | Error | A habit with this name already exists. |
+| 100 | Warning | Name was converted to a string. |
+| 101 | Warning | Description was converted to a string. |
+| 112 | Error | Active status was not a boolean. No data added. |
+| 113 | Error | Periodicity was not an integer. No data added. |
+| 114 | Error | Name cannot be None or empty. |
+| 120 | Error | Standard periodicity does not contain only integers. |
+| 121 | Error | Standard active status does not contain only booleans. |
+| 122 | Error | Standard lists have different lengths. |
+| 123 | Error | Not all inputs are lists. |
+| 200 | Error | Habit tracking status cannot be changed; habit is marked as passive. |
+| 201 | Warning | Habit already marked as complete for this due date. |
+| 301 | Success | Name of habit changed. |
+| 302 | Success | Description of habit changed. |
+| 303 | Success | Periodicity of habit changed. |
+| 304 | Success | Active status of habit changed. |
+| 401 | Warning | No name changed. |
+| 402 | Warning | No description changed. |
+| 403 | Warning | No periodicity changed. |
+| 404 | Warning | No active status changed. |
+| 411 | Warning | Description is None. Set to default. |
+| 412 | Warning | Periodicity is None or empty. Set to default 1. |
+| 413 | Warning | Active status is None or empty. Set to default False. |

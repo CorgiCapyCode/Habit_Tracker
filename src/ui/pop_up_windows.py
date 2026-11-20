@@ -1,7 +1,7 @@
 """
-This module contains two smaller windows without user interaction.
+This module contains two smaller helper windows.
 
------ Classes - only if not empty -----
+----- Classes -----
 ShowHighscoreWindow:    Class to open a window that shows the habits with the
                         highscore streak.
 InputMessageWindow:     Class to open a window to give the user feedback about
@@ -49,13 +49,9 @@ class ShowHighscoreWindow:
         self.highscore_frame = tk.Frame(self.highscore_root)
         self.highscore_frame.grid(sticky="nsew")
         self.subframe_table = tk.Frame(self.highscore_frame)
-        self.subframe_table.grid(
-            row=0, column=0, padx=10, pady=10, sticky="nsew"
-        )
+        self.subframe_table.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.subframe_close_button = tk.Frame(self.highscore_frame)
-        self.subframe_close_button.grid(
-            row=1, column=0, padx=10, pady=10, sticky="w"
-        )
+        self.subframe_close_button.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
         self.highscore_frame.grid_columnconfigure(0, weight=1)
         self.highscore_frame.grid_columnconfigure(1, weight=1)
@@ -78,9 +74,9 @@ class ShowHighscoreWindow:
             self.subframe_table, column=column_lst, show="headings"
         )
         for entry in column_lst:
-            formated_heading = " ".join(entry.split("_")).capitalize()
+            formatted_heading = " ".join(entry.split("_")).capitalize()
             self.habit_highscore_table.heading(
-                entry, text=formated_heading, anchor=tk.W
+                entry, text=formatted_heading, anchor=tk.W
             )
             self.habit_highscore_table.column(entry, minwidth=50)
         self.load_highscore_data_to_table()
@@ -92,13 +88,13 @@ class ShowHighscoreWindow:
 
     def load_highscore_data_to_table(self):
         """
-        This functions is used to load the habit entries in the database into
+        This function is used to load the habit entries in the database into
         the table.
 
         ----- Description -----
-        This function uses the find the highest value in the highscore column
-        and then filter all habits that have this value, in case there are
-        several habits having the same highscore.
+        This function finds the highest value in the highscore column and then
+        filters all habits that have this value, in case several habits share
+        the same highscore.
         """
         highscore_value = search_for_highscore_in_db(session=self.session)
         highscore_objects = filter_for_highscore_objects_in_db(
@@ -121,9 +117,10 @@ class ShowHighscoreWindow:
         """
         self.highscore_root.destroy()
 
+
 class InputMessageWindow:
     """
-    Creates a window that displayes the error and warnings.
+    Creates a window that displays the error and warnings.
 
     ----- Attributes -----
     message_codes (list):   List of error codes.
@@ -140,39 +137,33 @@ class InputMessageWindow:
         message_codes (list):   List of error codes.
         """
         messages = {
-            0: "Habit Successfully added to the database",
-            1: "ERROR: Habit with this name already existing",
+            0: "Habit successfully added to the database.",
+            1: "ERROR: A habit with this name already exists.",
             100: "WARNING: Name was converted to a string.",
             101: "WARNING: Description was converted to a string.",
-            112: (
-                "ERROR: Status for active was not of type boolean. ",
-                "No data added."
-            ),
-            113: "ERROR: Periodicity was not of type integer. No data added.",
+            112: "ERROR: Active status was not a boolean. No data added.",
+            113: "ERROR: Periodicity was not an integer. No data added.",
             114: "ERROR: Name cannot be None or empty.",
-            120: "ERROR: Standard Periodicty does not only contain integers.",
-            121: (
-                "ERROR: Standard status for active does not only ",
-                "contain boolean."
-            ),
-            122: "ERROR: Standad lists have different length.",
+            120: "ERROR: Standard periodicity does not contain only integers.",
+            121: "ERROR: Standard active status does not contain only booleans.",
+            122: "ERROR: Standard lists have different lengths.",
             123: "ERROR: Not all inputs are lists.",
             200: (
-                "ERROR: Habit tracking status cannot be changed,",
-                " habit marked as inactive."
+                "ERROR: Habit tracking status cannot be changed; "
+                "habit is marked as passive."
             ),
-            201: "WARNING: Habit already markes as complete for this due date",
+            201: "WARNING: Habit already marked as complete for this due date.",
             301: "Name of habit changed.",
             302: "Description of habit changed.",
             303: "Periodicity of habit changed.",
-            304: "Status for active of habit changed.",
+            304: "Active status of habit changed.",
             401: "WARNING: No name changed.",
             402: "WARNING: No description changed.",
             403: "WARNING: No periodicity changed.",
-            404: "WARNING: No status for active chagned.",
+            404: "WARNING: No active status changed.",
             411: "WARNING: Description is None. Set to default.",
             412: "WARNING: Periodicity is None or empty. Set to default 1.",
-            413: "WARNING: Active Status is None or empty. Set to default False.",
+            413: "WARNING: Active status is None or empty. Set to default False.",
         }
 
         if message_codes:
@@ -183,15 +174,13 @@ class InputMessageWindow:
             self.input_message_frame.pack(fill="both", expand=True)
             self.ok_button = tk.Button(
                 self.input_message_frame,
-                text="Ok",
+                text="OK",
                 command=self.click_close_window,
                 width=15,
             )
             self.ok_button.pack(padx=10, pady=10)
             for code in message_codes:
-                message_text = messages.get(
-                    code, f"Unknown error: Code {code}"
-                )
+                message_text = messages.get(code, f"Unknown error: Code {code}")
                 label = tk.Label(self.input_message_frame, text=message_text)
                 label.pack(anchor="w", padx=10, pady=10)
 

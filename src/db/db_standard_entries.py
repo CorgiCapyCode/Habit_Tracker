@@ -24,7 +24,7 @@ these rules:
 (3) For periodicity all values from type int can be
     entered. Later in the in-app habit creation only
     values 1, 2 or 7 can be entered (via choice of
-    daily, evey other day or weekly).
+    daily, every other day or weekly).
     The filters in the application will handle 1, 2, 7 as
     values. So it is highly recommended to only use these.
 """

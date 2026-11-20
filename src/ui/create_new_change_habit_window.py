@@ -9,6 +9,7 @@ habits to the application, or to modify existing ones.
 CreateChangeHabitWindow:    This is the class to create the change/add habit
 window based on Tkinter.
 """
+
 import tkinter as tk
 
 from db.db_functions import add_new_entry_to_db, modify_existing_object_in_db
@@ -23,7 +24,7 @@ class CreateChangeHabitWindow:
     This class creates a window, using tkinter, to allow creating and change
     habits.
     The class methods will forward also information to the InputMessageWindow
-    class to inform the user if the change has been successfull or not.
+    class to inform the user if the change has been successful or not.
 
     ----- Attributes -----
     main_window (MainWindow):       Containing the reference to the MainWindow.
@@ -40,7 +41,7 @@ class CreateChangeHabitWindow:
     ----- Methods -----
     click_apply:            Command for button to add a new habit to the
                             database based on the values in the input fields.
-    click_close:            Command for closing the window.
+    click_close_window:     Command for closing the window.
     click_apply_and_close:  Command for button to firstly add a new habit to
                             the database and then close the window.
     click_change_and_close: Command for button to firstly apply the changes to
@@ -49,7 +50,7 @@ class CreateChangeHabitWindow:
     convert_period_to_integer:  Converter for the attribute handling the
     periodicity; converts the string into the corresponding integer value.
 
-    ----- Note - only if not empty -----
+    ----- Note -----
     Currently there are three options for periodicity (daily, every other day
     and weekly). A description how to add, change, remove options is given in
     the readme.md.
@@ -92,9 +93,7 @@ class CreateChangeHabitWindow:
         )
 
         self.subframe_buttons = tk.Frame(self.create_change_main_frame)
-        self.subframe_buttons.grid(
-            row=1, column=0, padx=10, pady=10, sticky="nsew"
-        )
+        self.subframe_buttons.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
         self.create_change_root.grid_columnconfigure(0, weight=1)
         self.create_change_main_frame.grid_columnconfigure(0, weight=1)
@@ -112,15 +111,9 @@ class CreateChangeHabitWindow:
                 row=2, column=0, padx=10, pady=10, sticky="nsew"
             )
             self.create_change_main_frame.grid_columnconfigure(2, weight=1)
-            self.subframe_additional_information.grid_columnconfigure(
-                0, weight=1
-            )
-            self.subframe_additional_information.grid_columnconfigure(
-                1, weight=1
-            )
-            self.subframe_additional_information.grid_columnconfigure(
-                2, weight=1
-            )
+            self.subframe_additional_information.grid_columnconfigure(0, weight=1)
+            self.subframe_additional_information.grid_columnconfigure(1, weight=1)
+            self.subframe_additional_information.grid_columnconfigure(2, weight=1)
 
         self.main_window = main_window
         self.session = session
@@ -138,9 +131,7 @@ class CreateChangeHabitWindow:
         if self.create_new_habit_flag:
             self.active_checkbox_status.set(False)
         else:
-            self.active_checkbox_status.set(
-                self.habit_object.habit_active_status
-            )
+            self.active_checkbox_status.set(self.habit_object.habit_active_status)
 
         widget_properties = {"padx": 10, "pady": 10, "sticky": "w"}
         title_properties = {"padx": 10, "pady": 10, "sticky": "e"}
@@ -149,9 +140,7 @@ class CreateChangeHabitWindow:
             self.subframe_input_values, text="Category", justify="left"
         )
         self.headline_label_enter_data = tk.Label(
-            self.subframe_input_values,
-            text="Enter your data here",
-            justify="left"
+            self.subframe_input_values, text="Enter your data here", justify="left"
         )
         self.headline_label_default_info = tk.Label(
             self.subframe_input_values,
@@ -163,15 +152,11 @@ class CreateChangeHabitWindow:
             self.subframe_input_values, text="Habit Name", justify="left"
         )
         self.name_information_label = tk.Label(
-            self.subframe_input_values,
-            text="Field is requiered",
-            justify="left"
+            self.subframe_input_values, text="Field is required", justify="left"
         )
 
         self.description_label = tk.Label(
-            self.subframe_input_values,
-            text="Habit Description",
-            justify="left"
+            self.subframe_input_values, text="Habit Description", justify="left"
         )
         self.description_information_label = tk.Label(
             self.subframe_input_values,
@@ -184,7 +169,7 @@ class CreateChangeHabitWindow:
         )
         self.period_information_label = tk.Label(
             self.subframe_input_values,
-            text="the default value will be 'daily'",
+            text="The default value will be 'daily'.",
             justify="left",
         )
 
@@ -194,16 +179,12 @@ class CreateChangeHabitWindow:
             justify="left",
         )
 
-        self.name_entry = tk.Entry(
-            self.subframe_input_values, text="Enter name"
-        )
+        self.name_entry = tk.Entry(self.subframe_input_values, text="Enter name")
         self.description_entry = tk.Text(
             self.subframe_input_values, height=3, width=50, wrap="word"
         )
         self.period_entry = tk.OptionMenu(
-            self.subframe_input_values,
-            self.period_variable,
-            *self.period_option_lst
+            self.subframe_input_values, self.period_variable, *self.period_option_lst
         )
         self.active_entry = tk.Checkbutton(
             self.subframe_input_values, variable=self.active_checkbox_status
@@ -226,13 +207,11 @@ class CreateChangeHabitWindow:
             )
 
         self.close_button = tk.Button(
-            self.subframe_buttons,
-            text="Close",
-            command=self.click_close_window
+            self.subframe_buttons, text="Close", command=self.click_close_window
         )
 
         if self.create_new_habit_flag is False:
-            self.tracking_status_title_lable = tk.Label(
+            self.tracking_status_title_label = tk.Label(
                 self.subframe_additional_information,
                 text="Tracking Status",
                 justify="left",
@@ -255,9 +234,7 @@ class CreateChangeHabitWindow:
             )
 
             self.start_date_title_label = tk.Label(
-                self.subframe_additional_information,
-                text="Start Date",
-                justify="left"
+                self.subframe_additional_information, text="Start Date", justify="left"
             )
             self.start_date_value_label = tk.Label(
                 self.subframe_additional_information,
@@ -277,9 +254,7 @@ class CreateChangeHabitWindow:
             )
 
             self.highscore_title_label = tk.Label(
-                self.subframe_additional_information,
-                text="Highscore",
-                justify="left"
+                self.subframe_additional_information, text="Highscore", justify="left"
             )
             self.highscore_value_label = tk.Label(
                 self.subframe_additional_information,
@@ -311,9 +286,7 @@ class CreateChangeHabitWindow:
 
         if self.create_new_habit_flag is False:
             self.name_entry.insert(tk.END, self.habit_object.habit_name)
-            self.description_entry.insert(
-                tk.END, self.habit_object.habit_description
-            )
+            self.description_entry.insert(tk.END, self.habit_object.habit_description)
 
         entry_widgets_position = [
             (self.headline_label_category, 0, 0),
@@ -336,19 +309,15 @@ class CreateChangeHabitWindow:
 
         if self.create_new_habit_flag:
             self.apply_button.grid(row=0, column=0, **widget_properties)
-            self.apply_and_close_button.grid(
-                row=0, column=1, **widget_properties
-            )
+            self.apply_and_close_button.grid(row=0, column=1, **widget_properties)
             self.close_button.grid(row=0, column=2, **widget_properties)
         else:
-            self.change_and_close_button.grid(
-                row=0, column=0, **widget_properties
-            )
+            self.change_and_close_button.grid(row=0, column=0, **widget_properties)
             self.close_button.grid(row=0, column=1, **widget_properties)
 
         if self.create_new_habit_flag is False:
             additional_info_widgets_position = [
-                (self.tracking_status_title_lable, 0, 0, title_properties),
+                (self.tracking_status_title_label, 0, 0, title_properties),
                 (self.tracking_status_value_label, 0, 1, widget_properties),
                 (self.creation_date_title_label, 1, 0, title_properties),
                 (self.creation_date_value_label, 1, 1, widget_properties),
@@ -378,7 +347,7 @@ class CreateChangeHabitWindow:
         ----- Description -----
         This method takes the input values from the entry, text etc. fields and
         transfers them to the function that adds this data to the database.
-        It also refers to the main window, so that the table containg all the
+        It also refers to the main window, so that the table containing all the
         habits will be updated.
         Further it takes the return message from the adding function and
         creates an instance of the InputMessageWindow to inform the user about
@@ -406,7 +375,7 @@ class CreateChangeHabitWindow:
         Applying the changes and closing the window.
 
         ----- Description -----
-        Calling firstly the click_apply method and then the click_close method.
+        Calling first the click_apply method and then the click_close_window method.
         """
         self.click_apply()
         self.click_close_window()
@@ -422,7 +391,7 @@ class CreateChangeHabitWindow:
         Then it updates the table in the main window, showing all habits to the
         user.
         It also calls the InputMessageWindow to feedback the user the state.
-        Lastly it uses the click_close method to close the window.
+        Lastly it uses the click_close_window method to close the window.
         """
         function_status_messages = modify_existing_object_in_db(
             session=self.session,
@@ -445,7 +414,7 @@ class CreateChangeHabitWindow:
         The method takes the selected value from the period, which is a string
         and converts it into the needed integer.
 
-        ----- Returns - onyl if not empty -----
+        ----- Returns -----
         period (int):   Returns the needed integer to calculate the due dates.
         """
         period = self.period_variable.get()

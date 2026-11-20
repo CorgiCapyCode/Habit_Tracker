@@ -10,10 +10,12 @@ delete_history_entries:     Deleting entries from the database table
 
 import datetime
 
-from habit_classes import HabitHistory
+from sqlalchemy.orm import Session
+
+from habit_classes import Habit, HabitHistory
 
 
-def create_new_history_entry(session, habit_object):
+def create_new_history_entry(session: Session, habit_object: Habit) -> None:
     """
     This function creates new entries in the database table habithistory.
 
@@ -37,7 +39,8 @@ def create_new_history_entry(session, habit_object):
     session.add(history_entry)
     session.commit()
 
-def delete_history_entries(session, habit_object):
+
+def delete_history_entries(session: Session, habit_object: Habit) -> None:
     """
     This function deletes history entries related to a specific habit object.
 

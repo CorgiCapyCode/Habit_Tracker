@@ -21,10 +21,10 @@ From module db_functions:
 delete_entries_from_db              This function consists of two function calls and a simple call of the delete method from SQLAlchemy's session.
 
 From module db_object_functions:
-change_active_passiv_status         This function only calls other functions.
-manage_active_passiv_status         This function only calls other functions.
-manage_passiv_habits                This function only calls other functions.
-switch_active_passiv_status         This function only switches one boolean attribute from the habit.
+change_active_passive_status         This function only calls other functions.
+manage_active_passive_status         This function only calls other functions.
+manage_passive_habits                This function only calls other functions.
+switch_active_passive_status         This function only switches one boolean attribute from the habit.
 reset-functions                     These functions only switch one attribute from the habit.
 set_tracking_status_to_true         This function only switches one boolean attribute from the habit and calls one function.
 
@@ -132,6 +132,7 @@ class TestAddNewEntryToDb(unittest.TestCase):
         )
         self.assertEqual(return_value, [113, 112, 114])
 
+
 class TestAddStandardHabitsToDb(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
@@ -168,7 +169,7 @@ class TestAddStandardHabitsToDb(unittest.TestCase):
         )
         self.assertEqual(return_value, [100, 1, 100, 1, 100, 1])
 
-    def test_working_input(self):
+    def test_existing_names_return_duplicate_code(self):
         name = ["Test 1", "Test 2", "Test 3"]
         description = ["Descrip 1", "Descrip 2", "Descrip 3"]
         period = [17, 18, 19]
@@ -200,7 +201,8 @@ class TestAddStandardHabitsToDb(unittest.TestCase):
         )
         self.assertEqual(return_value, [])
 
-class TestModifiyExistingObjectsInDb(unittest.TestCase):
+
+class TestModifyExistingObjectsInDb(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
         self.habit_object = Mock()
@@ -257,7 +259,7 @@ class TestModifiyExistingObjectsInDb(unittest.TestCase):
         )
         self.assertEqual(return_value, [411, 412, 413, 301, 302, 303, 304])
 
-    def test_with_emtpy_str_inputs(self):
+    def test_with_empty_str_inputs(self):
         name = ""
         description = ""
         period = ""
@@ -269,7 +271,7 @@ class TestModifiyExistingObjectsInDb(unittest.TestCase):
         )
         self.assertEqual(return_value, [114])
 
-    def test_with_emtpy_str_inputs_name_different(self):
+    def test_with_empty_str_inputs_name_different(self):
         name = "Test not empty"
         description = ""
         period = ""
@@ -280,6 +282,7 @@ class TestModifiyExistingObjectsInDb(unittest.TestCase):
             self.session, self.habit_object, name, description, period, active_status
         )
         self.assertEqual(return_value, [412, 413, 301, 302, 303, 304])
+
 
 class TestManageTrackingStatus(unittest.TestCase):
     def setUp(self):
@@ -303,6 +306,7 @@ class TestManageTrackingStatus(unittest.TestCase):
 
         return_value = manage_tracking_status(self.session, self.test_name_list)
         self.assertEqual(return_value, [200])
+
 
 class TestSetupActiveHabits(unittest.TestCase):
     def setUp(self):
@@ -333,6 +337,7 @@ class TestSetupActiveHabits(unittest.TestCase):
             datetime.date(2000, 1, 1) + datetime.timedelta(days=17),
         )
 
+
 class TestStreakCalculator(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
@@ -361,6 +366,7 @@ class TestStreakCalculator(unittest.TestCase):
         streak_calculator(self.session, self.habit_object)
         self.assertEqual(self.habit_object.habit_current_streak, 37)
         self.assertEqual(self.habit_object.habit_highscore_streak, 37)
+
 
 class TestFilterHabits(unittest.TestCase):
     def setUp(self):
@@ -400,7 +406,8 @@ class TestFilterHabits(unittest.TestCase):
         return_value = filter_habits(self.session, period_filter, active_filter)
         self.assertEqual(return_value, [self.habit_object_all])
 
-class TestForHistoryEntries(unittest.TestCase):
+
+class TestFilterForHistoryEntries(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
         self.history_object_filtered = Mock()

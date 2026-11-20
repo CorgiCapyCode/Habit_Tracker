@@ -13,19 +13,21 @@ add_new_entry_to_db:            This function is adding new habits to the
                                 database.
 delete_entries_from_db:         It is used to delete entries from the database,
                                 including the corresponding history entries.
-modify_existing_object_in_db:   After modifing some values of an existing
+modify_existing_object_in_db:   After modifying some values of an existing
                                 habit, this function changes the values of the
                                 objects.
 """
 
+from sqlalchemy.orm import Session
+
 from db.db_filter_functions import filter_db_for_names
 from db.db_history_functions import delete_history_entries
-from db.db_object_functions import manage_active_passiv_status
+from db.db_object_functions import manage_active_passive_status
 from habit_classes import Habit
 
 
 def add_standard_habits_to_db(
-    session,
+    session: Session,
     standard_name: list[str],
     standard_description: list[str],
     standard_period: list[int],
@@ -50,7 +52,7 @@ def add_standard_habits_to_db(
     standard_period (list):         This list is used to create the habit
                                     periodicity.
     standard_active_status (list):  This list is used to mark the habits as
-                                    active or passiv.
+                                    active or passive.
 
     ----- Returns -----
     function_status_message (int):          Returns an error message(int) that
@@ -68,10 +70,10 @@ def add_standard_habits_to_db(
         standard_name,
         standard_description,
         standard_period,
-        standard_active_status
+        standard_active_status,
     ]
     for arg in arg_list:
-        if type(arg) != list:
+        if not isinstance(arg, list):
             function_status_message.append(123)
             return function_status_message
 
@@ -80,16 +82,15 @@ def add_standard_habits_to_db(
         return function_status_message
 
     if not all(
-        isinstance(active_status, bool)
-        for active_status in standard_active_status
+        isinstance(active_status, bool) for active_status in standard_active_status
     ):
         function_status_message.append(121)
         return function_status_message
 
-    if not all(
-        len(standard_values) == len(standard_name)
+    expected_length = len(standard_name)
+    if any(
+        len(standard_values) != expected_length
         for standard_values in [
-            standard_name,
             standard_description,
             standard_period,
             standard_active_status,
@@ -107,13 +108,16 @@ def add_standard_habits_to_db(
         message_handler = add_new_entry_to_db(
             session, name, description, period, active_status
         )
-        function_status_message_adding_entries.extend(
-            message_handler
-        )
+        function_status_message_adding_entries.extend(message_handler)
     return function_status_message_adding_entries
 
+
 def add_new_entry_to_db(
-    session, name: str, description: str, period: int, active_status: bool
+    session: Session,
+    name: str,
+    description: str,
+    period: int,
+    active_status: bool,
 ) -> list[int]:
     """
     This function creates new habits and adds them to the database.
@@ -127,7 +131,7 @@ def add_new_entry_to_db(
     name (str):             This will be added as the name of the habit.
     description (str):      This will be added as the description of the habit.
     period (int):           This will be added as the periodicity of the habit.
-    active_status (bool):   This will used as the mark for being active/passive.
+    active_status (bool):   This will be used as the mark for being active/passive.
 
     ----- Returns -----
     function_status_message (list): Returning a list of values representing
@@ -157,15 +161,14 @@ def add_new_entry_to_db(
         habit_entry = Habit(name, description, period, active_status)
         session.add(habit_entry)
         session.commit()
-        manage_active_passiv_status(
-            session=session, habit_object=habit_entry
-        )
+        manage_active_passive_status(session=session, habit_object=habit_entry)
         function_status_message.append(0)
     else:
         function_status_message.append(1)
     return function_status_message
 
-def delete_entries_from_db(session, habit_names: list[str]):
+
+def delete_entries_from_db(session: Session, habit_names: list[str]) -> None:
     """
     This function deletes habits based on the name.
 
@@ -184,8 +187,9 @@ def delete_entries_from_db(session, habit_names: list[str]):
         session.delete(entry)
     session.commit()
 
+
 def modify_existing_object_in_db(
-    session,
+    session: Session,
     original_object: Habit,
     name: str,
     description: str,
@@ -207,7 +211,7 @@ def modify_existing_object_in_db(
     original_object (Habit):    Containing the original object to be changed.
     name (str):                 Containing the new name.
     description (str):          Containing the new description.
-    period (int):               Containing the new periodicitiy.
+    period (int):               Containing the new periodicity.
     active_status (bool):       Containing the new mark for being
                                 active/passive.
 
@@ -221,7 +225,7 @@ def modify_existing_object_in_db(
         return function_status_messages
     if description is None:
         function_status_messages.append(411)
-        description="default"
+        description = "default"
     if period is None or period == "":
         function_status_messages.append(412)
         period = 1

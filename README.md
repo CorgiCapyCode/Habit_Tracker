@@ -284,13 +284,14 @@ The code tries to follow PEP 8 and PEP 257:
 * https://peps.python.org/pep-0008/
 * https://peps.python.org/pep-0257/
 
-Ruff is included as a development dependency and can be run with:
+Ruff is included as a development dependency. Format and lint the code with:
 
 ```bash
+uv run ruff format .
 uv run ruff check .
 ```
 
-`src/db/add_sample_data.py` and `src/tests/function_test.py` are not fully formatted to the same standard as the rest of the code.
+All Python files are formatted with Ruff; documentation is kept in docstrings rather than structural comments.
 
 ## Final words
 
