@@ -38,13 +38,21 @@ search_for_highscore_in_db          This is a simple search for a value in a spe
 filter_for_highscore_objects_in_db  This is a simple search for a value in a specific column using SQLAlchemy. No testing needed.
 """
 
+import datetime
 import unittest
 from unittest.mock import MagicMock, Mock
 
-from db.db_filter_functions import *
-from db.db_functions import *
-from db.db_history_functions import *
-from db.db_object_functions import *
+from db.db_filter_functions import filter_for_history_entries, filter_habits
+from db.db_functions import (
+    add_new_entry_to_db,
+    add_standard_habits_to_db,
+    modify_existing_object_in_db,
+)
+from db.db_object_functions import (
+    manage_tracking_status,
+    setup_active_habits,
+    streak_calculator,
+)
 
 
 class TestAddNewEntryToDb(unittest.TestCase):
