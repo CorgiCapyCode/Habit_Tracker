@@ -17,7 +17,6 @@ from db.db_filter_functions import (
 )
 
 
-# Class ShowHighscoreWindow
 class ShowHighscoreWindow:
     """
     Creates a window to show the user the habits having the highest streak.
@@ -34,7 +33,6 @@ class ShowHighscoreWindow:
     click_close_window:             Closes the window.
     """
 
-    # Constructor
     def __init__(self, session):
         """
         Constructor for the ShowHighscoreWindow class.
@@ -42,9 +40,6 @@ class ShowHighscoreWindow:
         ----- Arguments -----
         session (Session):  Containing the reference to the database session.
         """
-        # ----------------------------------------
-        # Setting up the basics for the GUI to create or change habits.
-        # region ----------------------------------------
 
         self.highscore_root = tk.Tk()
         self.highscore_root.geometry("400x400")
@@ -69,23 +64,11 @@ class ShowHighscoreWindow:
 
         self.session = session
 
-        # endregion
-
-        # ----------------------------------------
-        # Creating the widget for the subframe_close_button.
-        # region ----------------------------------------
-
         self.close_button = tk.Button(
             self.subframe_close_button,
             text="Close window",
             command=self.click_close_window,
         )
-
-        # endregion
-
-        # ----------------------------------------
-        # Creating the table to show the habits to the user.
-        # region ----------------------------------------
 
         column_lst = [
             "habit_name",
@@ -102,23 +85,11 @@ class ShowHighscoreWindow:
             self.habit_highscore_table.column(entry, minwidth=50)
         self.load_highscore_data_to_table()
 
-        # endregion
-
-        # ----------------------------------------
-        # Place the widgets into the frames.
-        # region ----------------------------------------
-
         self.habit_highscore_table.grid(
             row=0, column=0, padx=10, pady=10, sticky="nsew"
         )
         self.close_button.grid(row=0, column=0, padx=10, pady=10, sticky="e")
-        # endregion
 
-    # ----------------------------------------
-    # Methods
-    # region ----------------------------------------
-
-    # load_highscore_data_to_table
     def load_highscore_data_to_table(self):
         """
         This functions is used to load the habit entries in the database into
@@ -144,17 +115,12 @@ class ShowHighscoreWindow:
                 ),
             )
 
-    # click_close_window
     def click_close_window(self):
         """
         Closes the window.
         """
         self.highscore_root.destroy()
 
-    # endregion
-
-
-# Class InputMessageWindow
 class InputMessageWindow:
     """
     Creates a window that displayes the error and warnings.
@@ -166,7 +132,6 @@ class InputMessageWindow:
     click_close_window:     Closes the window.
     """
 
-    # Constructor
     def __init__(self, message_codes):
         """
         Constructor of the class.
@@ -230,8 +195,6 @@ class InputMessageWindow:
                 label = tk.Label(self.input_message_frame, text=message_text)
                 label.pack(anchor="w", padx=10, pady=10)
 
-
-    # click_ok
     def click_close_window(self):
         """
         Closes the window.

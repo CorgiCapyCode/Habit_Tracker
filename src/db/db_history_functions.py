@@ -12,14 +12,7 @@ import datetime
 
 from habit_classes import HabitHistory
 
-# endregion
 
-# ----------------------------------------
-# Functions
-# region ----------------------------------------
-
-
-# create_new_history_entry
 def create_new_history_entry(session, habit_object):
     """
     This function creates new entries in the database table habithistory.
@@ -44,8 +37,6 @@ def create_new_history_entry(session, habit_object):
     session.add(history_entry)
     session.commit()
 
-
-# delete_history_entries
 def delete_history_entries(session, habit_object):
     """
     This function deletes history entries related to a specific habit object.
@@ -67,5 +58,3 @@ def delete_history_entries(session, habit_object):
     for entry in history_entries_to_be_deleted:
         session.delete(entry)
     session.commit()
-
-# endregion

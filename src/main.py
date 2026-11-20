@@ -46,6 +46,5 @@ def main():
     )
     app.main_root.mainloop()
 
-
 if __name__ == "__main__":
     main()

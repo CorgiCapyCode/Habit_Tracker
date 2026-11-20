@@ -27,12 +27,7 @@ from sqlalchemy import and_ as sqla_and_
 
 from habit_classes import Habit, HabitHistory
 
-# ----------------------------------------
-# Functions
-# region ----------------------------------------
 
-
-# filter_habits
 def filter_habits(
     session, period_filter: int | None = None, active_filter: int = 0
 ) -> list[Habit]:
@@ -98,8 +93,6 @@ def filter_habits(
         table_content = session.query(Habit).all()
     return table_content
 
-
-# filter_db_for_names
 def filter_db_for_names(session, names: list) -> list[Habit]:
     """
     Filtering the table habit in the database for habit names.
@@ -118,8 +111,6 @@ def filter_db_for_names(session, names: list) -> list[Habit]:
     entries = session.query(Habit).filter(Habit.habit_name.in_(names)).all()
     return entries
 
-
-# search_for_highscore_in_db
 def search_for_highscore_in_db(session) -> int:
     """
     Function to search for the highest value in the highscore column in the
@@ -142,8 +133,6 @@ def search_for_highscore_in_db(session) -> int:
     )
     return highscore_value
 
-
-# filter_for_highscore_objects_in_db
 def filter_for_highscore_objects_in_db(
     session, highscore_value: int
 ) -> list[Habit]:
@@ -169,15 +158,6 @@ def filter_for_highscore_objects_in_db(
     )
     return entries
 
-
-# endregion
-
-# ----------------------------------------
-# HabitHistory class related filters
-# region ----------------------------------------
-
-
-# filter_for_history_entries
 def filter_for_history_entries(
     session, status_filter: int, timespan: int
 ) -> list[HabitHistory]:
@@ -257,5 +237,3 @@ def filter_for_history_entries(
         table_content = session.query(HabitHistory).all()
 
     return table_content
-
-# endregion

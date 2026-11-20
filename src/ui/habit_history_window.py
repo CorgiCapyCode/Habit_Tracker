@@ -6,14 +6,12 @@ ShowHabitHistory:   Representation of a window that shows all habit history
                     entries.
 """
 
-
 import tkinter as tk
 from tkinter import ttk
 
 from db.db_filter_functions import filter_for_history_entries
 
 
-# Class ShowHabitHistory
 class ShowHabitHistory:
     """
     Representation of a window that shows all habit history entries.
@@ -50,7 +48,6 @@ class ShowHabitHistory:
                                     all entries and then load the data again.
     """
 
-    # Constructor
     def __init__(self, session):
         """
         Creates the window to show habit history entries.
@@ -58,9 +55,6 @@ class ShowHabitHistory:
         ----- Arguments -----
         session (Session):  Containing the reference to the database session.
         """
-        # ----------------------------------------
-        # Setting up the basics for the GUI to show the history.
-        # region ----------------------------------------
 
         self.habit_history_root = tk.Tk()
         self.habit_history_root.geometry("950x400")
@@ -90,7 +84,6 @@ class ShowHabitHistory:
         self.subframe_history_table.grid_columnconfigure(0, weight=1)
         self.subframe_interaction_buttons.grid_columnconfigure(0, weight=1)
 
-        # Setting the main attributes that are used.
         self.session = session
 
         digit_validation = self.habit_history_root.register(
@@ -100,12 +93,6 @@ class ShowHabitHistory:
 
         self.status_filter = 0
         self.timespan = None
-
-        # endregion
-
-        # ----------------------------------------
-        # Filter buttons
-        # region ----------------------------------------
 
         self.reset_filter_button = tk.Button(
             self.subframe_filter_buttons,
@@ -141,12 +128,6 @@ class ShowHabitHistory:
             justify="left",
         )
 
-        # endregion
-
-        # ----------------------------------------
-        # Creating the table to show the entries to the user.
-        # region ----------------------------------------
-
         column_lst = [
             "habit_name",
             "fail_or_complete_date_and_time",
@@ -164,22 +145,11 @@ class ShowHabitHistory:
             self.history_table.column(entry, minwidth=50)
         self.load_history_data_to_table()
 
-        # endregion
-
-        # ----------------------------------------
-        # Creating the widgets for the subframe_interaction_buttons
-        # region ----------------------------------------
         self.close_window_button = tk.Button(
             self.subframe_interaction_buttons,
             text="Close Window",
             command=self.click_close_window,
         )
-
-        # endregion
-
-        # ----------------------------------------
-        # Place the widgets into the frames.
-        # region ----------------------------------------
 
         self.reset_filter_button.grid(row=0, column=0, **widget_properties)
         self.show_fails_completed_filter_button.grid(
@@ -199,20 +169,12 @@ class ShowHabitHistory:
             row=0, column=0, padx=10, pady=10, sticky="w"
         )
 
-        # endregion
-
-    # ----------------------------------------
-    # Class Methods
-    # region ----------------------------------------
-
-    # click_close_window
     def click_close_window(self):
         """
         Closes the window by destroying the instance of the class.
         """
         self.habit_history_root.destroy()
 
-    # click_reset_filter_settings
     def click_reset_filter_settings(self):
         """
         Resets the filter settings to the default values.
@@ -227,7 +189,6 @@ class ShowHabitHistory:
 
         self.update_table()
 
-    # click_show_fails_completed
     def click_show_fails_completed(self):
         """
         Alters the filter setting between all, only completed and only failed.
@@ -245,7 +206,6 @@ class ShowHabitHistory:
             self.status_filter += 1
         self.update_table()
 
-    # click_show_timespan_only
     def click_show_timespan_only(self):
         """
         Taking the user input and store it in the timespan variable for
@@ -258,7 +218,6 @@ class ShowHabitHistory:
             self.timespan = min(user_input, 36500)
         self.update_table()
 
-    # on_releasing_key
     def on_releasing_key(self, not_used_event):
         """
         This function controlls the user input in the entry field for the
@@ -289,7 +248,6 @@ class ShowHabitHistory:
             self.entry_timespan.delete(0, tk.END)
             self.entry_timespan.insert(0, str(value_after_pressing))
 
-    # validation_of_entry_data
     def validation_of_entry_data(self, P: str) -> bool:
         """
         This function is used to validate if the user input is a digit.
@@ -302,7 +260,6 @@ class ShowHabitHistory:
         """
         return bool(P.isdigit() is True or P == "" or P == "")
 
-    # load_history_data_to_table
     def load_history_data_to_table(self):
         """
         This functions is used to load the history entries in the database into
@@ -335,13 +292,12 @@ class ShowHabitHistory:
                 index="end",
                 value=(
                     table_entry.habit_key,
-                    display_date_time,  # fail_or_completion_date_time
+                    display_date_time,
                     table_entry.corresponding_due_date,
-                    completion_status,  # type_of_completion
+                    completion_status,
                 ),
             )
 
-    # update_table
     def update_table(self):
         """
         This function updates the table content by removing all entries and
@@ -350,5 +306,3 @@ class ShowHabitHistory:
         for row in self.history_table.get_children():
             self.history_table.delete(row)
         self.load_history_data_to_table()
-
-    # endregion

@@ -29,7 +29,7 @@ reset-functions                     These functions only switch one attribute fr
 set_tracking_status_to_true         This function only switches one boolean attribute from the habit and calls one function.
 
 From module db_history_functions:
-create_new_history_entry            This function creates a new instance of the HabitHistory object based on the input by 
+create_new_history_entry            This function creates a new instance of the HabitHistory object based on the input by
 delete_history_entries              This function consists of a simple search for objects in the database and the call of the delete method from SQLAlchemy's session.
 
 From module db_filter_functions:
@@ -47,7 +47,6 @@ from db.db_history_functions import *
 from db.db_object_functions import *
 
 
-# TestAddNewEntryToDb
 class TestAddNewEntryToDb(unittest.TestCase):
     def setUp(self):
         self.habit_object = Mock()
@@ -59,7 +58,6 @@ class TestAddNewEntryToDb(unittest.TestCase):
         period = 17
         active_status = True
 
-        # Setting the search for check_name in the function to None to simulate that there is none such entry.
         self.session.query.return_value.filter_by.return_value.first.return_value = None
         return_value = add_new_entry_to_db(
             self.session, name, description, period, active_status
@@ -72,7 +70,6 @@ class TestAddNewEntryToDb(unittest.TestCase):
         period = 5
         active_status = True
 
-        # Setting the search for check_name in the function to None to simulate that there is none such entry.
         self.session.query.return_value.filter_by.return_value.first.return_value = None
         return_value = add_new_entry_to_db(
             self.session, name, description, period, active_status
@@ -85,7 +82,6 @@ class TestAddNewEntryToDb(unittest.TestCase):
         period = 5
         active_status = 17
 
-        # Setting the search for check_name in the function to None to simulate that there is no such entry.
         self.session.query.return_value.filter_by.return_value.first.return_value = None
         return_value = add_new_entry_to_db(
             self.session, name, description, period, active_status
@@ -98,7 +94,6 @@ class TestAddNewEntryToDb(unittest.TestCase):
         period = "Test"
         active_status = "Test"
 
-        # Setting the search for check_name in the function to None to simulate that there is no such entry.
         self.session.query.return_value.filter_by.return_value.first.return_value = None
         return_value = add_new_entry_to_db(
             self.session, name, description, period, active_status
@@ -111,7 +106,6 @@ class TestAddNewEntryToDb(unittest.TestCase):
         period = ""
         active_status = ""
 
-        # Setting the search for check_name in the function to None to simulate that there is no such entry.
         self.session.query.return_value.filter_by.return_value.first.return_value = None
         return_value = add_new_entry_to_db(
             self.session, name, description, period, active_status
@@ -124,15 +118,12 @@ class TestAddNewEntryToDb(unittest.TestCase):
         period = None
         active_status = None
 
-        # Setting the search for check_name in the function to None to simulate that there is no such entry.
         self.session.query.return_value.filter_by.return_value.first.return_value = None
         return_value = add_new_entry_to_db(
             self.session, name, description, period, active_status
         )
         self.assertEqual(return_value, [113, 112, 114])
 
-
-# TestAddStandardHabitsToDb
 class TestAddStandardHabitsToDb(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
@@ -164,10 +155,6 @@ class TestAddStandardHabitsToDb(unittest.TestCase):
         description = ["Descrip 1", "Descrip 2", "Descrip 3"]
         period = [17, 18, 19]
         active_status = [True, False, True]
-        # Expecting [100, 1, 100, 1, 100, 1] because the function add_new_entry_to_db.
-        # Return of 100: each passed name is an integer and gets converted to a string -> warning message
-        # Return of 1: the check_name is not None - and therefore there is a habit with this name for the test
-        # For proper tests of add_new_entry_to_db see class TestAddNewEntryToDb
         return_value = add_standard_habits_to_db(
             self.session, name, description, period, active_status
         )
@@ -178,9 +165,6 @@ class TestAddStandardHabitsToDb(unittest.TestCase):
         description = ["Descrip 1", "Descrip 2", "Descrip 3"]
         period = [17, 18, 19]
         active_status = [True, False, True]
-        # Expecting [1, 1, 1] because the function add_new_entry_to_db.
-        # Return of 1: the check_name is not None - and therefore there is a habit with this name for the test
-        # For proper tests of add_new_entry_to_db see class TestAddNewEntryToDb
         return_value = add_standard_habits_to_db(
             self.session, name, description, period, active_status
         )
@@ -208,8 +192,6 @@ class TestAddStandardHabitsToDb(unittest.TestCase):
         )
         self.assertEqual(return_value, [])
 
-
-# TestModifiyExistingObjectsInDb:
 class TestModifiyExistingObjectsInDb(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
@@ -291,24 +273,13 @@ class TestModifiyExistingObjectsInDb(unittest.TestCase):
         )
         self.assertEqual(return_value, [412, 413, 301, 302, 303, 304])
 
-
-# endregion
-
-# ----------------------------------------
-# Test module db_object_functions.
-# region ----------------------------------------
-
-
-# TestManageTrackingStatus
 class TestManageTrackingStatus(unittest.TestCase):
     def setUp(self):
         self.session = MagicMock()
         self.test_name_list = ["Name"]
 
     def test_active_true_tracking_true(self):
-        # Creating a mock_habit (test object)
         mock_habit = MagicMock(habit_active_status=True, habit_tracking_status=True)
-        # Making the filter_db_for_names function return the mock habit
         self.session.query.return_value.filter.return_value.all.return_value = [
             mock_habit
         ]
@@ -317,9 +288,7 @@ class TestManageTrackingStatus(unittest.TestCase):
         self.assertEqual(return_value, [201])
 
     def test_active_false_tracking_false(self):
-        # Creating a mock_habit (test object)
         mock_habit = MagicMock(habit_active_status=False, habit_tracking_status=False)
-        # Making the filter_db_for_names function return the mock habit
         self.session.query.return_value.filter.return_value.all.return_value = [
             mock_habit
         ]
@@ -327,8 +296,6 @@ class TestManageTrackingStatus(unittest.TestCase):
         return_value = manage_tracking_status(self.session, self.test_name_list)
         self.assertEqual(return_value, [200])
 
-
-# TestSetupActiveHabits
 class TestSetupActiveHabits(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
@@ -358,8 +325,6 @@ class TestSetupActiveHabits(unittest.TestCase):
             datetime.date(2000, 1, 1) + datetime.timedelta(days=17),
         )
 
-
-# TestStreakCalculator
 class TestStreakCalculator(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
@@ -389,15 +354,6 @@ class TestStreakCalculator(unittest.TestCase):
         self.assertEqual(self.habit_object.habit_current_streak, 37)
         self.assertEqual(self.habit_object.habit_highscore_streak, 37)
 
-
-# endregion
-
-# ----------------------------------------
-# Test module db_filter_functions
-# region ----------------------------------------
-
-
-# TestFilterHabits
 class TestFilterHabits(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
@@ -436,8 +392,6 @@ class TestFilterHabits(unittest.TestCase):
         return_value = filter_habits(self.session, period_filter, active_filter)
         self.assertEqual(return_value, [self.habit_object_all])
 
-
-# TestFilterForHistoryEntries
 class TestForHistoryEntries(unittest.TestCase):
     def setUp(self):
         self.session = Mock()
@@ -468,6 +422,3 @@ class TestForHistoryEntries(unittest.TestCase):
 
         return_value = filter_for_history_entries(self.session, status_filter, timespan)
         self.assertEqual(return_value, [self.history_object_filtered])
-
-
-# endregion

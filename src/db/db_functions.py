@@ -23,11 +23,7 @@ from db.db_history_functions import delete_history_entries
 from db.db_object_functions import manage_active_passiv_status
 from habit_classes import Habit
 
-# ----------------------------------------
-# Functions
-# region ----------------------------------------
 
-# add_standard_habits_to_db
 def add_standard_habits_to_db(
     session,
     standard_name: list[str],
@@ -66,7 +62,6 @@ def add_standard_habits_to_db(
                                             add_new_entry_to_db_function.
     """
 
-    # Validation of the input lists to ensure correct object creation.
     function_status_message = []
 
     arg_list = [
@@ -103,7 +98,6 @@ def add_standard_habits_to_db(
         function_status_message.append(122)
         return function_status_message
 
-    # Using the input lists to create new habit objects.
     function_status_message_adding_entries = []
     for counter, name in enumerate(standard_name):
         description = standard_description[counter]
@@ -118,8 +112,6 @@ def add_standard_habits_to_db(
         )
     return function_status_message_adding_entries
 
-
-# add_new_entry_to_db
 def add_new_entry_to_db(
     session, name: str, description: str, period: int, active_status: bool
 ) -> list[int]:
@@ -141,7 +133,6 @@ def add_new_entry_to_db(
     function_status_message (list): Returning a list of values representing
                                     error/warning codes.
     """
-    # Validation of the input to ensure correct object creation.
     function_status_message = []
 
     if not isinstance(period, int):
@@ -161,7 +152,6 @@ def add_new_entry_to_db(
         function_status_message.append(101)
         description = str(description)
 
-    # Using the input values to create new habit objects.
     check_name = session.query(Habit).filter_by(habit_name=name).first()
     if check_name is None:
         habit_entry = Habit(name, description, period, active_status)
@@ -175,8 +165,6 @@ def add_new_entry_to_db(
         function_status_message.append(1)
     return function_status_message
 
-
-# delete_entries_from_db
 def delete_entries_from_db(session, habit_names: list[str]):
     """
     This function deletes habits based on the name.
@@ -196,8 +184,6 @@ def delete_entries_from_db(session, habit_names: list[str]):
         session.delete(entry)
     session.commit()
 
-
-# modify_existing_object_in_db
 def modify_existing_object_in_db(
     session,
     original_object: Habit,
@@ -274,5 +260,3 @@ def modify_existing_object_in_db(
 
     session.commit()
     return function_status_messages
-
-# endregion

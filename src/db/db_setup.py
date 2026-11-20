@@ -24,7 +24,6 @@ from sqlalchemy.orm import sessionmaker as sqla_sessionmaker
 
 BaseClass = sqla_declarative_base()
 
-
 def start_db(log: bool = False):
     """
     Starts the database and creates one, if not existing
@@ -45,7 +44,6 @@ def start_db(log: bool = False):
         engine = sqla_create_engine("sqlite:///habit_tracker.db", echo=log)
 
     return engine
-
 
 def start_db_session(engine):
     """

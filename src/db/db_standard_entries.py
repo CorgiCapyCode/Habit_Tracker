@@ -29,7 +29,6 @@ these rules:
     values. So it is highly recommended to only use these.
 """
 
-# Standard Habit Names
 standard_habit_name = [
     "Clean Apartment",
     "Do Sports",
@@ -38,7 +37,6 @@ standard_habit_name = [
     "Water plants",
 ]
 
-# Standard Description
 standard_habit_description = [
     "Clean everything",
     "Go to training",
@@ -47,7 +45,6 @@ standard_habit_description = [
     "Water plants",
 ]
 
-# Standard Period
 standard_habit_period = [
     7,
     2,
@@ -56,7 +53,6 @@ standard_habit_period = [
     7,
 ]
 
-# Standard Active Status
 standard_habit_active_status = [
     True,
     False,

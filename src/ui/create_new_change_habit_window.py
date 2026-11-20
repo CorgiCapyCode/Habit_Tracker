@@ -15,7 +15,6 @@ from db.db_functions import add_new_entry_to_db, modify_existing_object_in_db
 from ui.pop_up_windows import InputMessageWindow
 
 
-# Class CreateChangeHabitWindow
 class CreateChangeHabitWindow:
     """
     Class to create a window to change and modify habits.
@@ -68,9 +67,6 @@ class CreateChangeHabitWindow:
         habit_object (Habit):       Argument to contain the object to be
                                     modified by the user. Default set to None.
         """
-        # ----------------------------------------
-        # Setting up the basics for the GUI to create or change habits.
-        # region ----------------------------------------
 
         if habit_object is None:
             self.create_new_habit_flag = True
@@ -81,8 +77,6 @@ class CreateChangeHabitWindow:
                 self.written_tracking_status = "Completed"
             else:
                 self.written_tracking_status = "To be completed"
-        # Setting up the window and the needed frames as a base layout for the
-        # application.
         self.create_change_root = tk.Tk()
         self.create_change_root.geometry("850x600")
         if self.create_new_habit_flag is True:
@@ -128,12 +122,6 @@ class CreateChangeHabitWindow:
                 2, weight=1
             )
 
-        # endregion
-
-        # ----------------------------------------
-        # Defining the basic attributes for entry fields, buttons and methods.
-        # region ----------------------------------------
-
         self.main_window = main_window
         self.session = session
 
@@ -154,16 +142,9 @@ class CreateChangeHabitWindow:
                 self.habit_object.habit_active_status
             )
 
-        # Define the basic styling for most of the widgets.
         widget_properties = {"padx": 10, "pady": 10, "sticky": "w"}
         title_properties = {"padx": 10, "pady": 10, "sticky": "e"}
 
-        # endregion
-
-        # ----------------------------------------
-        # Creating the labels and entry fields for the input values.
-        # region ----------------------------------------
-        # Labels
         self.headline_label_category = tk.Label(
             self.subframe_input_values, text="Category", justify="left"
         )
@@ -213,7 +194,6 @@ class CreateChangeHabitWindow:
             justify="left",
         )
 
-        # Entry fields
         self.name_entry = tk.Entry(
             self.subframe_input_values, text="Enter name"
         )
@@ -228,12 +208,6 @@ class CreateChangeHabitWindow:
         self.active_entry = tk.Checkbutton(
             self.subframe_input_values, variable=self.active_checkbox_status
         )
-
-        # endregion
-
-        # ----------------------------------------
-        # Creating the buttons to interact with the application.
-        # region ----------------------------------------
 
         if self.create_new_habit_flag:
             self.apply_button = tk.Button(
@@ -256,13 +230,6 @@ class CreateChangeHabitWindow:
             text="Close",
             command=self.click_close_window
         )
-
-        # endregion
-
-        # ----------------------------------------
-        # Creating the labels to show additional information when a habit is
-        # modified.
-        # region ----------------------------------------
 
         if self.create_new_habit_flag is False:
             self.tracking_status_title_lable = tk.Label(
@@ -342,26 +309,11 @@ class CreateChangeHabitWindow:
                 justify="left",
             )
 
-        # endregion
-
-        # ----------------------------------------
-        # Transfering the data from the existing habit to the GUI, so that the
-        # values can be changed.
-        # region ----------------------------------------
-
         if self.create_new_habit_flag is False:
             self.name_entry.insert(tk.END, self.habit_object.habit_name)
             self.description_entry.insert(
                 tk.END, self.habit_object.habit_description
             )
-            # active status and period are already set in the region to define
-            # the variables
-
-        # endregion
-
-        # ----------------------------------------
-        # Position the widgets in the different frames to create the layout
-        # region ----------------------------------------
 
         entry_widgets_position = [
             (self.headline_label_category, 0, 0),
@@ -419,13 +371,6 @@ class CreateChangeHabitWindow:
             ) in additional_info_widgets_position:
                 widget.grid(row=row, column=column, **style_properties)
 
-        # endregion
-
-    # ----------------------------------------
-    # Methods
-    # region ----------------------------------------
-
-    # click_apply
     def click_apply(self):
         """
         Method to create a new habit based on the data entered.
@@ -450,14 +395,12 @@ class CreateChangeHabitWindow:
         if message is not None:
             InputMessageWindow(message)
 
-    # click_close
     def click_close_window(self):
         """
         Closing the window, without saving any changes.
         """
         self.create_change_root.destroy()
 
-    # click_apply_and_close
     def click_apply_and_close(self):
         """
         Applying the changes and closing the window.
@@ -468,7 +411,6 @@ class CreateChangeHabitWindow:
         self.click_apply()
         self.click_close_window()
 
-    # click_change_and_close
     def click_change_and_close(self):
         """
         This method is used to first apply the changes and then close the
@@ -495,7 +437,6 @@ class CreateChangeHabitWindow:
         InputMessageWindow(function_status_messages)
         self.click_close_window()
 
-    # convert_period_to_integer
     def convert_period_to_integer(self):
         """
         Method to convert the string from period into the needed integer.
@@ -517,5 +458,3 @@ class CreateChangeHabitWindow:
         else:
             period = 1
         return period
-
-    # endregion

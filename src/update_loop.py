@@ -31,7 +31,6 @@ from db.db_object_functions import reset_current_streak, reset_tracking_status
 from habit_classes import Habit
 
 
-# loop_for_update_due_date
 def loop_for_update_due_date(session, main_window):
     """
     Loop function to check the status of the habits.
@@ -47,7 +46,7 @@ def loop_for_update_due_date(session, main_window):
     """
     check_due_date(session=session)
     main_window.update_data_in_table()
-    timer_in_milliseconds = 300000  # 5min
+    timer_in_milliseconds = 300000
     main_window.main_root.after(
         timer_in_milliseconds,
         lambda: loop_for_update_due_date(
@@ -55,8 +54,6 @@ def loop_for_update_due_date(session, main_window):
         ),
     )
 
-
-# check_due_date
 def check_due_date(session):
     """
     Checking if the due dates of the habits passed or not.
@@ -80,8 +77,6 @@ def check_due_date(session):
         if habit_entry.habit_next_due < current_date:
             check_tracking_status(session, habit_entry)
 
-
-# check_tracking_status
 def check_tracking_status(session, habit_object: Habit):
     """
     Checks the status of habit_tracking_status for each object.
@@ -107,8 +102,6 @@ def check_tracking_status(session, habit_object: Habit):
         calculate_new_due_date(session, habit_object)
         create_new_history_entry(session=session, habit_object=habit_object)
 
-
-# calculate_new_due_date
 def calculate_new_due_date(session, habit_object: Habit):
     """
     Calculates the new due date based on the current due date and its
@@ -138,8 +131,6 @@ def calculate_new_due_date(session, habit_object: Habit):
     )
     session.commit()
 
-
-# count_fails_up
 def count_fails_up(session, habit_object: Habit):
     """
     Counting up the number of fails to complete the task in time.
@@ -155,5 +146,3 @@ def count_fails_up(session, habit_object: Habit):
     """
     habit_object.habit_total_fails = habit_object.habit_total_fails + 1
     session.commit()
-
-# endregion
