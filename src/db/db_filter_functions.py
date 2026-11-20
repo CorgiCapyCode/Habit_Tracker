@@ -1,5 +1,5 @@
 """
-This module contains the filters to finde objects within the database.
+This module contains the filters to find objects within the database.
 
 ----- Description -----
 There are two different filter types in the module:
@@ -8,7 +8,7 @@ settings.
 The second type is used to filter for specific objects according to their name
 or highscore.
 
------ Functions - only if not empty -----
+----- Functions -----
 filter_habits:                      Used to filter habits according to the
                                     settings in the main window.
 filter_db_for_names:                Filter to find habits, mainly used to link
@@ -20,30 +20,20 @@ filter_for_highscore_objects_in_db: Used to filter for the highscore value.
 filter_for_history_entries:         Filters for history entries according to
                                     the settings in the window.
 """
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
 
-# Standard library imports
 import datetime
-from typing import Optional
 
-# Related third party imports
-from sqlalchemy import and_ as sqla_and_
+from sqlalchemy.orm import Session
 
-# Import from other modules
 from habit_classes import Habit, HabitHistory
 
-# endregion
-
-# ----------------------------------------
-# Functions
-# region ----------------------------------------
+SUPPORTED_PERIODS = (1, 2, 7)
 
 
-# filter_habits
 def filter_habits(
-    session, period_filter: Optional[int] = None, active_filter: int = 0
+    session: Session,
+    period_filter: int | None = None,
+    active_filter: int = 0,
 ) -> list[Habit]:
     """
     Filtering habits based on filter options.
@@ -57,59 +47,48 @@ def filter_habits(
     period_filter (int):    Integer that represents the periodicity filter,
                             default: None.
     active_filter (int):    Integer that represents one of the three states
-                            (active, passiv, all), default: 0 (all)
+                            (active, passive, all), default: 0 (all)
 
     ----- Returns -----
-    table_content (list):   Returning a list containg objects of the habit
+    table_content (list):   Returning a list containing objects of the habit
     class.
     """
-    if period_filter in (1, 2, 7) and active_filter == 0:
+    if period_filter in SUPPORTED_PERIODS and active_filter == 0:
         table_content = (
             session.query(Habit)
             .filter(
-                sqla_and_(
-                    Habit.habit_period == period_filter,
-                    Habit.habit_active_status == True,
-                )
+                Habit.habit_period == period_filter,
+                Habit.habit_active_status.is_(True),
             )
             .all()
         )
-    elif period_filter in (1, 2, 7) and active_filter == 1:
+    elif period_filter in SUPPORTED_PERIODS and active_filter == 1:
         table_content = (
             session.query(Habit)
             .filter(
-                sqla_and_(
-                    Habit.habit_period == period_filter,
-                    Habit.habit_active_status == False,
-                )
+                Habit.habit_period == period_filter,
+                Habit.habit_active_status.is_(False),
             )
             .all()
         )
-    elif period_filter in (1, 2, 7) and active_filter == 2:
+    elif period_filter in SUPPORTED_PERIODS and active_filter == 2:
         table_content = (
-            session.query(Habit)
-            .filter(Habit.habit_period == period_filter)
-            .all()
+            session.query(Habit).filter(Habit.habit_period == period_filter).all()
         )
-    elif period_filter not in (1, 2, 7) and active_filter == 0:
+    elif period_filter not in SUPPORTED_PERIODS and active_filter == 0:
         table_content = (
-            session.query(Habit)
-            .filter(Habit.habit_active_status == True)
-            .all()
+            session.query(Habit).filter(Habit.habit_active_status.is_(True)).all()
         )
-    elif period_filter not in (1, 2, 7) and active_filter == 1:
+    elif period_filter not in SUPPORTED_PERIODS and active_filter == 1:
         table_content = (
-            session.query(Habit)
-            .filter(Habit.habit_active_status == False)
-            .all()
+            session.query(Habit).filter(Habit.habit_active_status.is_(False)).all()
         )
     else:
         table_content = session.query(Habit).all()
     return table_content
 
 
-# filter_db_for_names
-def filter_db_for_names(session, names: list) -> list[Habit]:
+def filter_db_for_names(session: Session, names: list[str]) -> list[Habit]:
     """
     Filtering the table habit in the database for habit names.
 
@@ -128,8 +107,7 @@ def filter_db_for_names(session, names: list) -> list[Habit]:
     return entries
 
 
-# search_for_highscore_in_db
-def search_for_highscore_in_db(session) -> int:
+def search_for_highscore_in_db(session: Session) -> int:
     """
     Function to search for the highest value in the highscore column in the
     database.
@@ -144,17 +122,16 @@ def search_for_highscore_in_db(session) -> int:
     ----- Returns -----
     highscore_value (int): Returning an integer, representing the highscore.
     """
-    highscore_value = (
+    result = (
         session.query(Habit.habit_highscore_streak)
         .order_by(Habit.habit_highscore_streak.desc())
-        .first()[0]
+        .first()
     )
-    return highscore_value
+    return result[0] if result is not None else 0
 
 
-# filter_for_highscore_objects_in_db
 def filter_for_highscore_objects_in_db(
-    session, highscore_value: int
+    session: Session, highscore_value: int
 ) -> list[Habit]:
     """
     This function filters for all habits with the same highscore.
@@ -179,16 +156,8 @@ def filter_for_highscore_objects_in_db(
     return entries
 
 
-# endregion
-
-# ----------------------------------------
-# HabitHistory class related filters
-# region ----------------------------------------
-
-
-# filter_for_history_entries
 def filter_for_history_entries(
-    session, status_filter: int, timespan: int
+    session: Session, status_filter: int, timespan: int | None
 ) -> list[HabitHistory]:
     """
     A filter function that searches for history data according to the input
@@ -200,45 +169,39 @@ def filter_for_history_entries(
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
-    status_Filter (int):    A value that indicates if it should be filtered for
+    status_filter (int):    A value that indicates if it should be filtered for
                             only completed tasks, non-completed tasks / fails
                             or both. Can take the values 0, 1, 2.
     timespan (int):         An integer that describes the timespan from today
                             backwards where the user wants to see the history
-                            entries. Max. value is 36500 (around 100 years).
+                            entries. The history window limits the value.
 
     ----- Returns -----
     table_content (list):   A list of history entries is returned.
     """
     if timespan is None:
-
         if status_filter == 1:
             table_content = (
                 session.query(HabitHistory)
-                .filter(HabitHistory.type_of_completion == True)
+                .filter(HabitHistory.type_of_completion.is_(True))
                 .all()
             )
         elif status_filter == 2:
             table_content = (
                 session.query(HabitHistory)
-                .filter(HabitHistory.type_of_completion == False)
+                .filter(HabitHistory.type_of_completion.is_(False))
                 .all()
             )
         else:
             table_content = session.query(HabitHistory).all()
     elif isinstance(timespan, int):
-        reference_date = (
-            datetime.date.today() - datetime.timedelta(days=timespan)
-        )
+        reference_date = datetime.date.today() - datetime.timedelta(days=timespan)
         if status_filter == 1:
             table_content = (
                 session.query(HabitHistory)
                 .filter(
-                    sqla_and_(
-                        HabitHistory.fail_or_completion_date_time
-                        >= reference_date,
-                        HabitHistory.type_of_completion == True,
-                    )
+                    HabitHistory.fail_or_completion_date_time >= reference_date,
+                    HabitHistory.type_of_completion.is_(True),
                 )
                 .all()
             )
@@ -246,25 +209,18 @@ def filter_for_history_entries(
             table_content = (
                 session.query(HabitHistory)
                 .filter(
-                    sqla_and_(
-                        HabitHistory.fail_or_completion_date_time
-                        >= reference_date,
-                        HabitHistory.type_of_completion == False,
-                    )
+                    HabitHistory.fail_or_completion_date_time >= reference_date,
+                    HabitHistory.type_of_completion.is_(False),
                 )
                 .all()
             )
         else:
             table_content = (
                 session.query(HabitHistory)
-                .filter(
-                    HabitHistory.fail_or_completion_date_time >= reference_date
-                )
+                .filter(HabitHistory.fail_or_completion_date_time >= reference_date)
                 .all()
             )
     else:
         table_content = session.query(HabitHistory).all()
 
     return table_content
-
-# endregion

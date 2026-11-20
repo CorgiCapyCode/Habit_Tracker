@@ -1,164 +1,298 @@
-# Habit_Tracker_Course_OOFPP
-  
+# Habit Tracker
+
+A simple desktop habit tracker built with Python, Tkinter, and SQLAlchemy.
+
 ## General
-This application is an easy habit tracker application, allowing the usser to create habits that should be tracked.  
+
 ### Content
-This application consists out of different .py-files to run the application, a unittest file, a script to add sample data for 5 habits, a .md-file to describe the error codes and this README.md  
-### Python Version
-This application is written with Python Version 3.11.  
+
+This application lets you create, edit, delete, and track habits. It stores habits and their history in a SQLite database and provides Tkinter windows for the main list, habit history, high scores, and messages.
+
+The repository uses a `src` layout, a Hatchling-based package configuration, a lockfile, and unit tests. `error_code.md` documents the numeric message codes used by the GUI.
+
+### Python version
+
+The project requires Python 3.12 or newer (`requires-python = ">=3.12"` in `pyproject.toml`).
+
 ### Libraries
-Build-in libraries used:
+
+Runtime dependencies:
+
+* SQLAlchemy `>=2.0.23` (the lockfile currently resolves 2.1.9)
+
+Standard-library modules used by the application:
+
 * datetime
 * os
-* random (for add_sample_data only)
+* random (sample-data script only)
 * sys
 * tkinter
-* typing
 * unittest
-  
-Third party imports  
-* sqlalchemy (Version 2.0.23)
-  
-### Comments
-This application is written under the premise to use comments rarely.  
-Main purpose of the comments is to structure the code, to make it more readable.  
-Note that each function and class have its name as a comment just above the definition. This is because Visual Studio 2022 has been used to write this application. VS allows the user to collapse classes and functions to make it easier to navigate within one module. However collapsing a function means that you only can read “def …” (or in case of a class “class …”), without VS showing you the name.  
+
+Development and build tooling:
+
+* Hatchling (build backend)
+* pytest (configured for test discovery)
+* Ruff
+* uv (recommended for dependency and environment management)
+
+### Comments and documentation
+
+Project Python files do not use structural comments. Documentation is kept in module, class, and function docstrings; there are no separate per-module documentation files.
+
+## Project layout
+
+```text
+.
+├── error_code.md
+├── habit_tracker.db
+├── LICENSE.txt
+├── README.md
+├── pyproject.toml
+├── uv.lock
+└── src/
+    ├── main.py
+    ├── habit_classes.py
+    ├── update_loop.py
+    ├── db/
+    │   ├── __init__.py
+    │   ├── add_sample_data.py
+    │   ├── db_filter_functions.py
+    │   ├── db_functions.py
+    │   ├── db_history_functions.py
+    │   ├── db_object_functions.py
+    │   ├── db_setup.py
+    │   └── db_standard_entries.py
+    ├── tests/
+    │   ├── __init__.py
+    │   └── function_test.py
+    └── ui/
+        ├── __init__.py
+        ├── create_new_change_habit_window.py
+        ├── habit_history_window.py
+        ├── main_window.py
+        └── pop_up_windows.py
+```
+
+`habit_tracker.db` is created automatically if it does not exist.
+
 ## Module / file overview
-Required modules/files:  
-* create_new_change_habit_window	Class to create new habits / change existing ones (GUI)
-* db_filter_functions				Functions to filter within the database				
-* db_functions						Functions to add / remove / change habits			
-* db_history_functions				Functions to add / remove habit history				
-* db_object_functions				Functions to adjust single attributes from a habit	
-* db_setup							Functions to setup the database						
-* db_standard_entries				Lists with information for standard habits			
-* habit_history_window				Class to show the history of habits (GUI)
-* main								Main file that has to be executed
-* main_window						Class to show the main window of the application (GUI)
-* pop_up_windows					Class for the highscore and the error code window (GUI)
-* update_loop						Functions to update the status of the habits regularly
-  
-Further modules:  
-* add_sample_data					Used to add sample data for 5 habits
-* function_testing					Used to test the main functions regarding the database
-  
-Further files:  
-* error_code.md						Contains a list of all warnings, error messages etc.
-* habit_tracker.db					Database - will be created if not existing
-* LICENSE.txt						License information.
-* README.md							Readme file
-   
-Find furhter information in the documentation for each module.  
+
+### Application modules
+
+* `src/main.py` — Entry point; creates the database session, asks whether to add standard habits, and starts the GUI.
+* `src/habit_classes.py` — SQLAlchemy models for habits and habit history.
+* `src/update_loop.py` — Periodically checks due dates and updates streaks, failures, and tracking status.
+
+### Database modules (`src/db/`)
+
+* `db_setup.py` — Creates the engine, database tables, and session.
+* `db_functions.py` — Adds, deletes, and modifies habits.
+* `db_object_functions.py` — Updates individual habit attributes such as active/tracking status and streaks.
+* `db_history_functions.py` — Adds and deletes habit-history entries.
+* `db_filter_functions.py` — Filters habits, history entries, names, and high-score results.
+* `db_standard_entries.py` — Lists used to create the standard habits.
+* `add_sample_data.py` — Standalone script that replaces the database contents with sample data.
+
+### UI modules (`src/ui/`)
+
+* `main_window.py` — Main application window with filters, habit table, and action buttons.
+* `create_new_change_habit_window.py` — Form for creating or editing a habit.
+* `habit_history_window.py` — Window that displays and filters habit history.
+* `pop_up_windows.py` — High-score window and message/info dialogs.
+
+### Tests and other files
+
+* `src/tests/function_test.py` — Unit tests for the main database functions.
+* `error_code.md` — Numeric message codes shown by the GUI.
+* `habit_tracker.db` — SQLite database.
+* `LICENSE.txt` — License information.
+* `pyproject.toml` — Package metadata, dependencies, console script, and pytest configuration.
+* `uv.lock` — Locked dependency versions.
+* `README.md` — This file.
+
 ## Installation
-Installation guide line:
-1. Make sure Python is installed.  
-2. Make sure sqlalchemy is installed. You can use pip install sqlalchemy.
-3. Download the files from github.
-4. Extract the files to a directory of your choice.
+
+1. Make sure Python 3.12 or newer is installed.
+2. Make sure Tkinter is available. On some Linux distributions it is a separate system package, for example `python3-tk`.
+3. Clone or download this repository.
+4. Install the project and its dependencies:
+
+```bash
+uv sync
+```
+
+Alternatively, with pip:
+
+```bash
+python -m pip install -e .
+```
+
+Both commands install SQLAlchemy and make the `habit-tracker` console script available.
 
 ## Run instructions
-### Run main application
-1. Open your console
-2. Navigate to the directory where you placed the files.
-3. Use:		python main.py
-  
-Note: The application will start with a request in the console. If you type anything else than yes (for example: YES), then the app will not try to add the standard habits again.  
-Afterwards you can use the GUI.  
-If the standard habits or the sample data is loaded, then 5 habits are created. One of them is not tracked. To see all adjust the filter.  
-### Run function testing
-1. Open your console
-2. Navigate to the directory where you placed the files.
-3. Use:		python -m unittest function_testing.py
-### Run sample data
-1. Open your console
-2. Navaigate to the directory where you placed the files.
-3. Use:		python add_sample_data.py
-  
-Note: This will delete the all entries from the database and add the specified sample data.  
-The next due date in the sample data is set to 2099/12/01. The reson is that the data stays stable during the evaluation.  
-To work with the application, it is recommended to delete the data using the app and create own habits, or use the standard habits. For deleting the data make sure that the filter shows the not-tracked items as well.    
-## Problems to run the application
-* Check the version of Python - try to use 3.11
-* Check the version of SQLAlchemy - try to use version 2.0.23
-  
-## Additional information on how to use the application
-### GUI
-The GUI is very simple.  
-You can scroll down in the tables you see in all windows, although it does not show a scroll bar.  
-The texts might not fit always in the space - try to make the windows bigger.  
-### Usage
-This application should be quite self-explanatory.  
-A hint: If you mark more than one habit in the main window and click on the change habit button, it will open a window for each marked habit!  
-## Adjusting the application
-This is a quick guide to adjust two things in the code: The standard habits and the periodicity.  
-### Add, modifiy or remove standard habits
-To add, adjust, remove standard habits:  
-1. Open db_standard_entries.py
-2. Adjust the lists as you like, but use the right data type in the lists. This will be controlled by the function that adds the data into the database.
-  
-To remove standard habits completlty:  
-1. Open main.py
-2. Delete the code in the region	Adding standard habits.
-3. Additionally you should delete: the import of the db_standard_entries in main.py.
-4. You can then delete the entire file db_standard_entries.py
-  
-To remove the request if you want to add standard habits:  
-1. Open main.py
-2. Delete the lines in the region   Adding standard habits.:  
-    input_for_standard_habits = input(  
-        "If you want to add the standard values type: yes\n"  
-    )  
-### Periodicity: add choices or make it free of choice
-Adding a new choice for the periodicity:  
-1. Open create_new_change_habit_window.py
-2. Go to the region:        Defining the basic attributes for entry fields, buttons and methods.
-3. Add the name of your new periodicity to the list:    self.period_option_lst
-4. Create a new elif statement (C&P a statement above) and enter your numbers.  
-   Example: "Every other week" / 14:  
-        elif self.habit_object.habit_period == 14:  
-            self.period_variable.set(self.period_option_lst[3])  
-5. Go to the function:      convert_period_to_integer
-6. Add a new elif statement before the else: (C&P a statement above) and enter your numbers.
 
-Adding the filter option:  
-1. Open main_window.py
-2. Go to the region:        Creating all widgets for the subframe_top_buttons
-3. Add a new button for the filter (C&P an existing one and rename it).  
-   For the command-function lambda: self.click_show_period(7) pass the number you want.  
-   Example: "Every other week" -> lambda: self.click_show_period(14)  
-4. Go to the region:        Place the widgets into the frames.
-5. Add your new button to the list second_row_widgets.
-6. Adjust the filter function filter_db accordingly by adding the new values to the if statement.  
-Note: Adding new filters to the main window may has a negative impact on the layout. Adjust it accordingly.  
-  
-Changing the system to a free of choice:  
-Have a look at the habit_history_window.py file and try to understand how it works there.  
-This can be rebuild in the same manner in the main_window.  
-The create_new_change_habit_window.py then has to be adjusted as well.  
-The entry incl. its validation should replace the list of choices.  
-The filter function filter_db should be adjusted accordingly to the filter_for_history_entries.  
-Note: It is not recommended to do this if you did not understand how it works in the habit_history_window.py  
+### Run the main application
+
+From the repository root:
+
+```bash
+uv run habit-tracker
+```
+
+Without uv, after installing the project:
+
+```bash
+python src/main.py
+```
+
+If you installed dependencies manually without installing the package, add `src` to `PYTHONPATH`:
+
+```bash
+PYTHONPATH=src python src/main.py
+```
+
+The application first asks:
+
+```text
+If you want to add the standard values type: yes
+```
+
+The input is case-sensitive: only the exact lowercase word `yes` adds the standard habits. Any other input skips them. Afterward the Tkinter GUI opens.
+
+The standard and sample data each create five habits. The standard data includes one passive habit, and the sample data includes one passive habit plus one active habit whose tracking status is false. Use the `Show tracked/not tracked habits` filter to include passive habits.
+
+### Run the unit tests
+
+From the repository root:
+
+```bash
+uv run python -m pytest
+```
+
+Without uv:
+
+```bash
+PYTHONPATH=src python -m pytest
+```
+
+The tests are `unittest.TestCase` classes in `src/tests/function_test.py`, so they can also be run directly:
+
+```bash
+uv run python -m unittest tests.function_test
+```
+
+All three commands run the same 32 tests.
+
+### Run the sample-data script
+
+From the repository root:
+
+```bash
+uv run python src/db/add_sample_data.py
+```
+
+Without uv:
+
+```bash
+PYTHONPATH=src python src/db/add_sample_data.py
+```
+
+The script asks two confirmation questions:
+
+1. `yes` confirms that current data should be replaced.
+2. `YES` confirms the final deletion.
+
+Any other answer leaves the database unchanged. The script deletes all existing habits and history entries and then adds five sample habits. The next due dates in the sample data are fixed to `2099-12-01`, but the history timestamps are randomized. Before working with the application normally, it is recommended to delete the sample data through the GUI and create your own habits or use the standard habits.
+
+## Problems running the application
+
+* Check that Python 3.12 or newer is being used.
+* Check that SQLAlchemy is installed and at least version 2.0.23.
+* Run commands from the repository root, or set `PYTHONPATH=src` when running modules directly.
+* If Tkinter is missing, install the Tkinter package provided by your operating system or Python distribution.
+* If the console script is not found, run `uv sync` or `python -m pip install -e .` again.
+
+## Additional information on how to use the application
+
+### GUI
+
+The GUI is intentionally simple.
+
+* Tables are displayed without scrollbars.
+* Text may not fit in every window; resize the window if needed.
+* Selecting several habits and clicking `Change Habit` opens one edit window per selected habit.
+
+### Usage
+
+Create a habit, choose its periodicity, and mark it complete when the due date arrives. The main window shows status information such as current streak, high score, failures, and due date. The history window shows completion and failure entries, and the high-score button shows habits with the best streak.
+
+## Adjusting the application
+
+### Add, modify, or remove standard habits
+
+To add or adjust standard habits:
+
+1. Open `src/db/db_standard_entries.py`.
+2. Edit the lists while keeping the same length and using these types:
+   * name: `str`
+   * description: `str`
+   * period: `int`
+   * active status: `bool`
+3. The in-app form currently supports periods 1, 2, and 7 (daily, every other day, and weekly). The main-window filters also recognize 1, 2, and 7, so using other integers is possible but they will not appear in those filtered views.
+
+To remove standard habits completely:
+
+1. Open `src/main.py`.
+2. Remove the imports of `add_standard_habits_to_db` and the `db.db_standard_entries` lists.
+3. Remove the `input(...)` line and the following `if input_for_standard_habits == "yes":` block.
+4. Remove the `InputMessageWindow` import if it is no longer used in `main.py`.
+5. Optionally delete `src/db/db_standard_entries.py`.
+
+To skip the prompt but still add standard habits on every start, remove only the `input(...)` line and make the `add_standard_habits_to_db(...)` call unconditional. Be aware that duplicate names are reported if the habits already exist.
+
+### Periodicity: add choices
+
+To add a new periodicity choice:
+
+1. Open `src/ui/create_new_change_habit_window.py`.
+2. In `CreateChangeHabitWindow.__init__`, add the label to `self.period_option_lst`.
+3. In the same initialization block, add an `elif` branch that maps the stored integer to the new list index.
+4. In `convert_period_to_integer`, add an `elif` branch before the `else` that maps the label back to the number of days.
+
+To add a matching filter button:
+
+1. Open `src/ui/main_window.py`.
+2. In `MainWindow.__init__`, create a button using `lambda: self.click_show_period(<days>)`.
+3. In the widget-placement section of the same method, add the button to `second_row_widgets`.
+4. Open `src/db/db_filter_functions.py` and update `filter_habits`, which currently has hard-coded checks for `(1, 2, 7)`.
+
+Adding buttons can affect the layout; adjust the grid placement if necessary.
+
+### Periodicity: make it free of choice
+
+The history window uses free-form input and validation. Use `src/ui/habit_history_window.py` as a reference:
+
+1. Replace the periodicity dropdown in `src/ui/create_new_change_habit_window.py` with an entry field.
+2. Add validation comparable to the history-window filters.
+3. Update `filter_habits` in `src/db/db_filter_functions.py` to work with arbitrary values, following the pattern used by `filter_for_history_entries`.
+
 ## Styling guidelines
-The style of this code tries to follow the suggestions made by  
-PEP 8 - Style Guide for Python Code  
-https://peps.python.org/pep-0008/  
-https://realpython.com/python-pep8/  
-PEP 257 - Docstring Conventions  
-https://peps.python.org/pep-0257/  
-https://realpython.com/documenting-python-code/#docstrings-background  
-  
-To comply with these guidelines, this code has been formatted using the following tools:  
-* isort
-* black
-* pylint
-* pycodestyle
-* mypy
-  
-The function_testing and the add_sample_data are not fully formatted in that way.  
+
+The code tries to follow PEP 8 and PEP 257:
+
+* https://peps.python.org/pep-0008/
+* https://peps.python.org/pep-0257/
+
+Ruff is included as a development dependency. Format and lint the code with:
+
+```bash
+uv run ruff format .
+uv run ruff check .
+```
+
+All Python files are formatted with Ruff; documentation is kept in docstrings rather than structural comments.
+
 ## Final words
-Ok - I know. Passive is written passive with an e at the end. Sorry!!! It is a bit a mess.  
-There are probably other mistakes.  
-If you find mistakes in the docstrings, comments etc. let me know by opening an issue in github. :)  
-### Further development and availability
-After course evaluation this application will not be developed further.  
-Only during the course it will be public available. Afterwards it will be taken down.  
+
+This is the original course project, with the repository restructured into the current `src` layout and updated build tooling. If you find documentation mistakes, please open an issue in GitHub.

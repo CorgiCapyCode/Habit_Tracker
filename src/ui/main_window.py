@@ -9,31 +9,18 @@ application using tkinter.
 MainWindow
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import sys
 import tkinter as tk
 from tkinter import ttk
 
-# Related third party imports
-
-# Import from other modules
-from create_new_change_habit_window import CreateChangeHabitWindow
-from db_filter_functions import filter_db_for_names, filter_habits
-from db_functions import delete_entries_from_db
-from db_object_functions import (
-    change_active_passiv_status, manage_tracking_status
-)
-from habit_history_window import ShowHabitHistory
-from pop_up_windows import InputMessageWindow, ShowHighscoreWindow
-
-# endregion
+from db.db_filter_functions import filter_db_for_names, filter_habits
+from db.db_functions import delete_entries_from_db
+from db.db_object_functions import change_active_passive_status, manage_tracking_status
+from ui.create_new_change_habit_window import CreateChangeHabitWindow
+from ui.habit_history_window import ShowHabitHistory
+from ui.pop_up_windows import InputMessageWindow, ShowHighscoreWindow
 
 
-# Class MainWindow
 class MainWindow:
     """
     Class to create the main window of the application.
@@ -43,7 +30,7 @@ class MainWindow:
     The main window contains three sections:
     1. Buttons to create new habits, adjust filter settings and show highscore
     as well as history data.
-    2. A table containg habits from the database according to the filter
+    2. A table containing habits from the database according to the filter
     settings made.
     3. Buttons to adjust selected habits. E.g. mark them as completed.
 
@@ -63,7 +50,7 @@ class MainWindow:
     click_show_history:             Opens a window to show the history.
     click_filter_active:            Alters the filter between all, only active
                                     and only passive.
-    click_show_period:              Setts the filter setting to the clicked
+    click_show_period:              Sets the filter setting to the clicked
                                     period.
     click_reset_filter:             Resets the filter settings to default.
     click_change_active_passive:    Calls functions to switch the active
@@ -77,42 +64,31 @@ class MainWindow:
                                     table.
     update_data_in_table:           Updates the data in the table.
     catch_selected_entries:         Used to get the habit names of the
-                                    seleceted entries in the table.
+                                    selected entries in the table.
     """
 
-    # Constructor
     def __init__(self, session):
         """
-        Constructor for the CreateChangeHabitWindow class.
+        Constructor for the MainWindow class.
 
         ----- Arguments -----
         session (Session):  Containing the reference to the database session.
         """
-        # ----------------------------------------
-        # Creating the main setup for the window.
-        # region ----------------------------------------
 
-        # Define the main_root and the frames for the MainWinodw.
         self.main_root = tk.Tk()
         self.main_root.geometry("950x400")
         self.main_root.title("Habit Tracker")
         self.main_root.grid_columnconfigure(0, weight=1)
-        self.main_root.wm_protocol(
-            "WM_DELETE_WINDOW", self.click_close_application
-        )
+        self.main_root.wm_protocol("WM_DELETE_WINDOW", self.click_close_application)
 
         self.main_frame = tk.Frame(self.main_root)
         self.main_frame.grid(sticky="nsew")
         self.subframe_top_buttons = tk.Frame(self.main_frame)
         self.subframe_top_buttons.grid(row=0, column=0, sticky="w")
         self.subframe_table = tk.Frame(self.main_frame)
-        self.subframe_table.grid(
-            row=1, column=0, padx=10, pady=10, sticky="nsew"
-        )
+        self.subframe_table.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
         self.subframe_low_buttons = tk.Frame(self.main_frame)
-        self.subframe_low_buttons.grid(
-            row=2, column=0, padx=10, pady=10, sticky="w"
-        )
+        self.subframe_low_buttons.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(1, weight=1)
@@ -122,18 +98,11 @@ class MainWindow:
         self.subframe_table.grid_columnconfigure(0, weight=1)
         self.subframe_low_buttons.grid_columnconfigure(0, weight=1)
 
-        # Defining the main attributes and the default filter settings.
         self.session = session
         self.habit_period_filter = None
         self.habit_active_filter = 0
 
         widget_properties = {"padx": 10, "pady": 10, "sticky": "w"}
-
-        # endregion
-
-        # ----------------------------------------
-        # Creating all widgets for the subframe_top_buttons
-        # region ----------------------------------------
 
         self.create_new_habit_button = tk.Button(
             self.subframe_top_buttons,
@@ -160,7 +129,7 @@ class MainWindow:
             text="Reset all filters",
             command=self.click_reset_filter,
         )
-        self.show_active_passiv_habits_button = tk.Button(
+        self.show_active_passive_habits_button = tk.Button(
             self.subframe_top_buttons,
             text="Show tracked/not tracked habits",
             command=self.click_filter_active,
@@ -172,7 +141,7 @@ class MainWindow:
         )
         self.show_every_other_day_button = tk.Button(
             self.subframe_top_buttons,
-            text="Show evey other day tracked habits",
+            text="Show every other day tracked habits",
             command=lambda: self.click_show_period(2),
         )
         self.show_weekly_button = tk.Button(
@@ -180,12 +149,6 @@ class MainWindow:
             text="Show weekly tracked habits",
             command=lambda: self.click_show_period(7),
         )
-
-        # endregion
-
-        # ----------------------------------------
-        # Creating all widgets for the subframe_lower_buttons.
-        # region ----------------------------------------
 
         self.change_active_button = tk.Button(
             self.subframe_low_buttons,
@@ -208,12 +171,6 @@ class MainWindow:
             command=self.click_delete_habit,
         )
 
-        # endregion
-
-        # ----------------------------------------
-        # Creating the table to show the habits to the user.
-        # region ----------------------------------------
-
         column_lst = [
             "habit_name",
             "habit_active_status",
@@ -230,22 +187,16 @@ class MainWindow:
             self.subframe_table, column=column_lst, show="headings"
         )
         for entry in column_lst:
-            formated_heading = " ".join(entry.split("_")).capitalize()
-            self.habit_table.heading(entry, text=formated_heading, anchor=tk.W)
+            formatted_heading = " ".join(entry.split("_")).capitalize()
+            self.habit_table.heading(entry, text=formatted_heading, anchor=tk.W)
             self.habit_table.column(entry, minwidth=50, width=50)
         self.load_data_to_table()
-
-        # endregion
-
-        # ----------------------------------------
-        # Place the widgets into the frames.
-        # region ----------------------------------------
 
         first_row_widgets = [
             self.create_new_habit_button,
             self.show_highscore_button,
             self.show_history_button,
-            self.close_application_button
+            self.close_application_button,
         ]
         column_number = [0, 1, 2, 4]
         for i, widget in enumerate(first_row_widgets):
@@ -253,10 +204,10 @@ class MainWindow:
 
         second_row_widgets = [
             self.reset_all_filters_button,
-            self.show_active_passiv_habits_button,
+            self.show_active_passive_habits_button,
             self.show_daily_button,
             self.show_every_other_day_button,
-            self.show_weekly_button
+            self.show_weekly_button,
         ]
         for i, widget in enumerate(second_row_widgets):
             widget.grid(row=1, column=i, **widget_properties)
@@ -269,25 +220,18 @@ class MainWindow:
             self.change_active_button,
             self.change_tracking_status_button,
             self.change_habit_button,
-            self.delete_habit_button
+            self.delete_habit_button,
         ]
         for i, widget in enumerate(fourth_row_widgets):
             widget.grid(row=0, column=i, **widget_properties)
 
-        # endregion
-
-    # ----------------------------------------
-    # Methods
-    # region ----------------------------------------
-
-    # click_create_new_habit
     def click_create_new_habit(self):
         """
         Creates an instance of the CreateChangeHabitWindow to create a new
         habit.
 
         ----- Description -----
-        This functions does not use an existing habit object to pass to the
+        This function does not use an existing habit object to pass to the
         class.
         By passing None for the habit object, the class will create an empty
         window to create a new habit, instead of adjusting an existing one.
@@ -296,7 +240,6 @@ class MainWindow:
             main_window=self, session=self.session, habit_object=None
         )
 
-    # click_close_application
     def click_close_application(self):
         """
         Closes the entire application, including all open windows.
@@ -304,7 +247,6 @@ class MainWindow:
         self.main_root.destroy()
         sys.exit()
 
-    # click_show_highscore
     def click_show_highscore(self):
         """
         Creates an instance of the ShowHighscoreWindow class to show the habits
@@ -312,7 +254,6 @@ class MainWindow:
         """
         ShowHighscoreWindow(self.session)
 
-    # click_show_history
     def click_show_history(self):
         """
         Creates an instance of the ShowHabitHistory class to show the user
@@ -320,7 +261,6 @@ class MainWindow:
         """
         ShowHabitHistory(session=self.session)
 
-    # click_filter_active
     def click_filter_active(self):
         """
         Alters the filter setting between all, only active and only passive.
@@ -338,13 +278,12 @@ class MainWindow:
             self.habit_active_filter += 1
         self.update_data_in_table()
 
-    # click_show_period
     def click_show_period(self, period: int):
         """
         Gets the period number and sets the filter accordingly.
 
          ----- Description -----
-         Receives the arguemnt from the button and uses it to set the period
+         Receives the argument from the button and uses it to set the period
          filter.
          Calls the function to update the table.
 
@@ -354,7 +293,6 @@ class MainWindow:
         self.habit_period_filter = period
         self.update_data_in_table()
 
-    # click_reset_filter
     def click_reset_filter(self):
         """
         Resets all filter settings to default (show all active habits).
@@ -363,7 +301,6 @@ class MainWindow:
         self.habit_active_filter = 0
         self.update_data_in_table()
 
-    # click_change_active_passive
     def click_change_active_passive(self):
         """
         Calls functions to change the active/passive status of the selected
@@ -371,12 +308,9 @@ class MainWindow:
         """
         selected_names = self.catch_selected_entries()
         if selected_names:
-            change_active_passiv_status(
-                session=self.session, names=selected_names
-            )
+            change_active_passive_status(session=self.session, names=selected_names)
             self.update_data_in_table()
 
-    # click_change_tracking_status
     def click_change_tracking_status(self):
         """
         Calls functions to change the tracking status of the selected entries
@@ -390,7 +324,6 @@ class MainWindow:
             InputMessageWindow(function_status_messages)
             self.update_data_in_table()
 
-    # click_change_habit
     def click_change_habit(self):
         """
         Creates an instance of the CreateChangeHabitWindow including passing an
@@ -403,39 +336,31 @@ class MainWindow:
             )
             for habit_entry in habit_entries:
                 CreateChangeHabitWindow(
-                    main_window=self,
-                    session=self.session,
-                    habit_object=habit_entry
+                    main_window=self, session=self.session, habit_object=habit_entry
                 )
 
-    # click_delete_habit
     def click_delete_habit(self):
         """
         Calls the delete function for the selected entries.
         """
         selected_names = self.catch_selected_entries()
         if selected_names:
-            delete_entries_from_db(
-                session=self.session, habit_names=selected_names
-            )
+            delete_entries_from_db(session=self.session, habit_names=selected_names)
             self.update_data_in_table()
 
-    # load_data_to_table
     def load_data_to_table(self):
         """
-        This functions is used to load the habit entries in the database into
+        This function is used to load the habit entries in the database into
         the table.
 
         ----- Description -----
         This function uses the filter attributes to load the data from the
         habit table into the window.
         """
-        # Call the filter function
         table_content = filter_habits(
             self.session, self.habit_period_filter, self.habit_active_filter
         )
 
-        # Load the data into the table in the main window.
         for table_entry in table_content:
             if table_entry.habit_active_status is False:
                 active_status = "Not tracked"
@@ -451,8 +376,8 @@ class MainWindow:
                 index="end",
                 value=(
                     table_entry.habit_name,
-                    active_status,  # table_entry.habit_active_status,
-                    tracking_status,  # table_entry.habit_tracking_status,
+                    active_status,
+                    tracking_status,
                     table_entry.habit_next_due,
                     table_entry.habit_current_streak,
                     table_entry.habit_highscore_streak,
@@ -463,7 +388,6 @@ class MainWindow:
                 ),
             )
 
-    # update_data_in_table
     def update_data_in_table(self):
         """
         This function updates the table content by removing all entries and
@@ -473,7 +397,6 @@ class MainWindow:
             self.habit_table.delete(row)
         self.load_data_to_table()
 
-    # catch_selected_entry
     def catch_selected_entries(self):
         """
         This function is used to catch the selection in the table of the
@@ -492,5 +415,3 @@ class MainWindow:
         else:
             selected_names = []
         return selected_names
-
-    # endregion

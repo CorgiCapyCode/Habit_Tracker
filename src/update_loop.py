@@ -14,7 +14,7 @@ check_due_date:             This function compares the current date with the
                             due date of the habit. If the due date passed, then
                             it calls further check functions.
 check_tracking_status:      This function checks the tracking status for habits
-                            whith passed due dates. It calls a set of functions
+                            with passed due dates. It calls a set of functions
                             depending on its status.
 calculate_new_due_date:     This function is used to calculate the new due date
                             for the habits with passed due date. It adjusts the
@@ -24,34 +24,23 @@ count_fails_up:             This function counts up the fails, when the due
                             complete (tracking_status = True)
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import datetime
 
-# Related third party imports
+from sqlalchemy.orm import Session
 
-# Import from other modules
-from db_history_functions import create_new_history_entry
-from db_object_functions import reset_current_streak, reset_tracking_status
+from db.db_history_functions import create_new_history_entry
+from db.db_object_functions import reset_current_streak, reset_tracking_status
 from habit_classes import Habit
 
-# endregion
-
-# ----------------------------------------
-# Functions
-# region ----------------------------------------
+UPDATE_INTERVAL_MS = 300000
 
 
-# loop_for_update_due_date
-def loop_for_update_due_date(session, main_window):
+def loop_for_update_due_date(session: Session, main_window):
     """
     Loop function to check the status of the habits.
 
     ----- Description -----
-    This functions calls itself to check the status of each habit that is
+    This function calls itself to check the status of each habit that is
     currently tracked, and thus has a due date.
 
     ----- Arguments -----
@@ -61,17 +50,13 @@ def loop_for_update_due_date(session, main_window):
     """
     check_due_date(session=session)
     main_window.update_data_in_table()
-    timer_in_milliseconds = 300000  # 5min
     main_window.main_root.after(
-        timer_in_milliseconds,
-        lambda: loop_for_update_due_date(
-            session=session, main_window=main_window
-        ),
+        UPDATE_INTERVAL_MS,
+        lambda: loop_for_update_due_date(session=session, main_window=main_window),
     )
 
 
-# check_due_date
-def check_due_date(session):
+def check_due_date(session: Session) -> None:
     """
     Checking if the due dates of the habits passed or not.
 
@@ -85,18 +70,13 @@ def check_due_date(session):
     session (Session):  Containing the reference to the database session.
     """
     current_date = datetime.date.today()
-    habit_entries = (
-        session.query(Habit)
-        .filter(Habit.habit_next_due.isnot(None))
-        .all()
-    )
+    habit_entries = session.query(Habit).filter(Habit.habit_next_due.is_not(None)).all()
     for habit_entry in habit_entries:
         if habit_entry.habit_next_due < current_date:
             check_tracking_status(session, habit_entry)
 
 
-# check_tracking_status
-def check_tracking_status(session, habit_object: Habit):
+def check_tracking_status(session: Session, habit_object: Habit) -> None:
     """
     Checks the status of habit_tracking_status for each object.
 
@@ -109,8 +89,7 @@ def check_tracking_status(session, habit_object: Habit):
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
-    habit_object (Habit):   Attribute to contain the object to be modified by
-                            the user.
+    habit_object (Habit):   The habit object to be modified.
     """
     if habit_object.habit_tracking_status is True:
         calculate_new_due_date(session, habit_object)
@@ -122,8 +101,7 @@ def check_tracking_status(session, habit_object: Habit):
         create_new_history_entry(session=session, habit_object=habit_object)
 
 
-# calculate_new_due_date
-def calculate_new_due_date(session, habit_object: Habit):
+def calculate_new_due_date(session: Session, habit_object: Habit) -> None:
     """
     Calculates the new due date based on the current due date and its
     periodicity.
@@ -135,8 +113,7 @@ def calculate_new_due_date(session, habit_object: Habit):
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
-    habit_object (Habit):   Attribute to contain the object to be modified by
-                            the user.
+    habit_object (Habit):   The habit object to be modified.
 
     ----- Note -----
     This function calculates the new next due date based on the current value.
@@ -147,14 +124,11 @@ def calculate_new_due_date(session, habit_object: Habit):
     tracked habit x times if the user did not login for x days - leading to
     the point that the number of fails also will rise x times.
     """
-    habit_object.habit_next_due += datetime.timedelta(
-        days=habit_object.habit_period
-    )
+    habit_object.habit_next_due += datetime.timedelta(days=habit_object.habit_period)
     session.commit()
 
 
-# count_fails_up
-def count_fails_up(session, habit_object: Habit):
+def count_fails_up(session: Session, habit_object: Habit) -> None:
     """
     Counting up the number of fails to complete the task in time.
 
@@ -164,10 +138,7 @@ def count_fails_up(session, habit_object: Habit):
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
-    habit_object (Habit):   Attribute to contain the object to be modified by
-    the user.
+    habit_object (Habit):   The habit object to be modified.
     """
     habit_object.habit_total_fails = habit_object.habit_total_fails + 1
     session.commit()
-
-# endregion

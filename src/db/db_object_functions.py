@@ -5,58 +5,35 @@ This module contains functions to handle the database objects.
 The functions in this module are for adjusting single or multiple values on
 existing database objects.
 For creating and deleting objects see the module db_functions.
-The module is divided into two regions. All functions that handle the objects
-indirectly are in the first region.
-Functions that are used to modify values from the objects are in the second
-region.
 
 ----- Functions -----
-from region 1 (indirect):
-change_active_passiv_status:    This function is used to switch the status of a
-                                habit from being tracked to not or vice versa.
-manage_active_passiv_status:    In this function the status of the habit
-                                (tracked/not tracked) is used to decide how to
-                                proceed with it
-manage_passiv_habits:           This function is used to call the reset
-                                functions for a passive habit.
-manage_tracking_status:         This function manages the tracking status for a
-                                list of habit names. 
-from region 2 (object):
-switch_active_passiv_status:    This function switches the status between being
-                                activly tracked or just passive.
-setup_active_habits:            This function sets the start date and the next
-                                due date for active habits, when activated.
-reset-functions:                The set of reset functions is used to reset a
-                                specific value back to the standard, like the
-                                current streaks to zero.
-set_tracking_status_to_true:    The function is used to set the tracking status
-                                to the value True.
-streak_calculator:              This function is used to calculate the current
-                                and highscore streak and adjusts the values of
-                                the object.
+change_active_passive_status:    Switches habits between tracked and passive.
+manage_active_passive_status:    Applies the reset or setup steps required by
+                                the new status.
+manage_passive_habits:           Calls the reset functions for a passive habit.
+manage_tracking_status:          Manages the tracking status for a list of habit
+                                names.
+switch_active_passive_status:    Switches the status of a single habit between
+                                actively tracked and passive.
+setup_active_habits:             Sets the start date and the next due date for
+                                active habits, when activated.
+reset functions:                 Reset individual values to their defaults,
+                                such as the current streak.
+set_tracking_status_to_true:     Sets the tracking status to True.
+streak_calculator:               Calculates and updates the current streak and
+                                the highscore streak.
 """
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
 
-# Standard library imports
 import datetime
 
-# Related third party imports
+from sqlalchemy.orm import Session
 
-# Import from other modules
-from db_filter_functions import filter_db_for_names
-from db_history_functions import create_new_history_entry
-
-# endregion
-
-# ----------------------------------------
-# Indirect functions
-# region ----------------------------------------
+from db.db_filter_functions import filter_db_for_names
+from db.db_history_functions import create_new_history_entry
+from habit_classes import Habit
 
 
-# change_active_passiv_status
-def change_active_passiv_status(session, names: list[str]):
+def change_active_passive_status(session: Session, names: list[str]) -> None:
     """
     This function starts the process of changing a habit from active to passive
     or vice versa.
@@ -79,12 +56,11 @@ def change_active_passiv_status(session, names: list[str]):
     habit_entries = filter_db_for_names(session=session, names=names)
 
     for habit_entry in habit_entries:
-        switch_active_passiv_status(session=session, habit_object=habit_entry)
-        manage_active_passiv_status(session=session, habit_object=habit_entry)
+        switch_active_passive_status(session=session, habit_object=habit_entry)
+        manage_active_passive_status(session=session, habit_object=habit_entry)
 
 
-# manage_active_passiv_status
-def manage_active_passiv_status(session, habit_object):
+def manage_active_passive_status(session: Session, habit_object: Habit) -> None:
     """
     This function manages habits according to their status of being active or
     passive.
@@ -101,11 +77,10 @@ def manage_active_passiv_status(session, habit_object):
     if habit_object.habit_active_status is True:
         setup_active_habits(session=session, habit_object=habit_object)
     else:
-        manage_passiv_habits(session=session, habit_object=habit_object)
+        manage_passive_habits(session=session, habit_object=habit_object)
 
 
-# manage_passiv_habits
-def manage_passiv_habits(session, habit_object):
+def manage_passive_habits(session: Session, habit_object: Habit) -> None:
     """
     This function calls the needed reset functions for passive habits.
 
@@ -116,7 +91,7 @@ def manage_passiv_habits(session, habit_object):
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
-    habit_object (Habit):   A habit object that will be reseted.
+    habit_object (Habit):   A habit object that will be reset.
     """
     reset_start_date(session=session, habit_object=habit_object)
     reset_next_due(session=session, habit_object=habit_object)
@@ -125,8 +100,7 @@ def manage_passiv_habits(session, habit_object):
     reset_tracking_status(session=session, habit_object=habit_object)
 
 
-# manage_tracking_status
-def manage_tracking_status(session, names: list[str]) -> list[int]:
+def manage_tracking_status(session: Session, names: list[str]) -> list[int]:
     """
     This function manages the tracking status for a list of habit names.
 
@@ -153,9 +127,7 @@ def manage_tracking_status(session, names: list[str]) -> list[int]:
             habit_entry.habit_active_status is True
             and habit_entry.habit_tracking_status is False
         ):
-            set_tracking_status_to_true(
-                session=session, habit_object=habit_entry
-            )
+            set_tracking_status_to_true(session=session, habit_object=habit_entry)
             streak_calculator(session=session, habit_object=habit_entry)
         elif habit_entry.habit_active_status is False:
             function_status_message.append(200)
@@ -164,15 +136,8 @@ def manage_tracking_status(session, names: list[str]) -> list[int]:
 
     return function_status_message
 
-# endregion
 
-# ----------------------------------------
-# Object functions
-# region ----------------------------------------
-
-
-# switch_active_passiv_status
-def switch_active_passiv_status(session, habit_object):
+def switch_active_passive_status(session: Session, habit_object: Habit) -> None:
     """
     This function switches the status of active_status from true to false and
     reverse.
@@ -185,14 +150,13 @@ def switch_active_passiv_status(session, habit_object):
     session.commit()
 
 
-# setup_active_habits
-def setup_active_habits(session, habit_object):
+def setup_active_habits(session: Session, habit_object: Habit) -> None:
     """
     This function sets up active habits.
 
     ----- Description -----
     The function uses a habit object and sets up a start date and a next due
-    date if not exitsting.
+    date if not existing.
     It is used after a habit object is set to active.
 
     ----- Arguments -----
@@ -209,10 +173,9 @@ def setup_active_habits(session, habit_object):
     session.commit()
 
 
-# reset_current_streak
-def reset_current_streak(session, habit_object):
+def reset_current_streak(session: Session, habit_object: Habit) -> None:
     """
-    Reseting the current streak to default value: 0
+    Resetting the current streak to default value: 0
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
@@ -222,10 +185,9 @@ def reset_current_streak(session, habit_object):
     session.commit()
 
 
-# reset_tracking_status
-def reset_tracking_status(session, habit_object):
+def reset_tracking_status(session: Session, habit_object: Habit) -> None:
     """
-    Reseting the tracking status to default value: False
+    Resetting the tracking status to default value: False
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
@@ -235,10 +197,9 @@ def reset_tracking_status(session, habit_object):
     session.commit()
 
 
-# reset_start_date
-def reset_start_date(session, habit_object):
+def reset_start_date(session: Session, habit_object: Habit) -> None:
     """
-    Reseting the start date to default value: None
+    Resetting the start date to default value: None
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
@@ -248,10 +209,9 @@ def reset_start_date(session, habit_object):
     session.commit()
 
 
-# reset_next_due
-def reset_next_due(session, habit_object):
+def reset_next_due(session: Session, habit_object: Habit) -> None:
     """
-    Reseting the next due date to default value: None
+    Resetting the next due date to default value: None
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
@@ -261,10 +221,9 @@ def reset_next_due(session, habit_object):
     session.commit()
 
 
-# reset_total_fails
-def reset_total_fails(session, habit_object):
+def reset_total_fails(session: Session, habit_object: Habit) -> None:
     """
-    Reseting the total number of fails to default value: 0
+    Resetting the total number of fails to default value: 0
 
     ----- Arguments -----
     session (Session):      Containing the reference to the database session.
@@ -274,8 +233,7 @@ def reset_total_fails(session, habit_object):
     session.commit()
 
 
-# set_tracking_status_to_true
-def set_tracking_status_to_true(session, habit_object):
+def set_tracking_status_to_true(session: Session, habit_object: Habit) -> None:
     """
     Sets the tracking status to True.
 
@@ -292,8 +250,7 @@ def set_tracking_status_to_true(session, habit_object):
     create_new_history_entry(session=session, habit_object=habit_object)
 
 
-# streak_calculator
-def streak_calculator(session, habit_object):
+def streak_calculator(session: Session, habit_object: Habit) -> None:
     """
     Calculating the current and highscore streak.
 
@@ -307,8 +264,7 @@ def streak_calculator(session, habit_object):
     habit_object (Habit):   A habit object that will be changed.
     """
     habit_object.habit_current_streak = habit_object.habit_current_streak + 1
-    if habit_object.habit_current_streak > habit_object.habit_highscore_streak:
-        habit_object.habit_highscore_streak = habit_object.habit_current_streak
+    habit_object.habit_highscore_streak = max(
+        habit_object.habit_highscore_streak, habit_object.habit_current_streak
+    )
     session.commit()
-
-# endregion

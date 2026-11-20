@@ -12,14 +12,8 @@ HabitHistory:   This class is a representation of the history behind a habit.
 Both classes have the BaseClass as a parent.
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import datetime
 
-# Related third party imports
 from sqlalchemy import Boolean as sqla_Boolean
 from sqlalchemy import Column as sqla_Column
 from sqlalchemy import Date as sqla_Date
@@ -28,17 +22,9 @@ from sqlalchemy import ForeignKey as sqla_ForeignKey
 from sqlalchemy import Integer as sqla_Integer
 from sqlalchemy import String as sqla_String
 
-# Import from other modules
-from db_setup import BaseClass
-
-# endregion
-
-# ----------------------------------------
-# Classes
-# region ----------------------------------------
+from db.db_setup import BaseClass
 
 
-# Class Habit
 class Habit(BaseClass):
     """
     This class is a representation of a habit.
@@ -51,7 +37,7 @@ class Habit(BaseClass):
                                     unique.
     habit_description (str):        Describing the habit in more detail.
     habit_period (int):             Representing the periodicity of the habit.
-    habit_active_status (bool):     Showing if a habit is activly tracked or
+    habit_active_status (bool):     Showing if a habit is actively tracked or
                                     not.
     habit_tracking_status (bool):   Showing if a habit is completed within its
                                     time.
@@ -71,9 +57,6 @@ class Habit(BaseClass):
 
     __tablename__ = "habit"
 
-    # ----------------------------------------
-    # Defining each column in the habit table.
-    # region ----------------------------------------
     habit_name = sqla_Column("habit_name", sqla_String, primary_key=True)
     habit_description = sqla_Column("habit_description", sqla_String)
     habit_period = sqla_Column("habit_period", sqla_Integer)
@@ -82,15 +65,10 @@ class Habit(BaseClass):
     habit_creation_date = sqla_Column("habit_creation_date", sqla_Date)
     habit_start_date = sqla_Column("habit_start_date", sqla_Date)
     habit_current_streak = sqla_Column("habit_current_streak", sqla_Integer)
-    habit_highscore_streak = sqla_Column(
-        "habit_highscore_streak", sqla_Integer
-    )
+    habit_highscore_streak = sqla_Column("habit_highscore_streak", sqla_Integer)
     habit_total_fails = sqla_Column("habit_total_fails", sqla_Integer)
     habit_next_due = sqla_Column("habit_next_due", sqla_Date)
 
-    # endregion
-
-    # Constructor
     def __init__(
         self,
         habit_name,
@@ -106,7 +84,7 @@ class Habit(BaseClass):
                                     unique.
         habit_description (str):    Describing the habit in more detail.
         habit_period (int):         Representing the periodicity of the habit.
-        habit_active_status (bool): Showing if a habit is activly tracked or
+        habit_active_status (bool): Showing if a habit is actively tracked or
                                     not.
         """
         self.habit_name = habit_name
@@ -122,7 +100,6 @@ class Habit(BaseClass):
         self.habit_next_due = None
 
 
-# Class HabitHistory
 class HabitHistory(BaseClass):
     """
     This class is a representation of the habit history.
@@ -131,13 +108,13 @@ class HabitHistory(BaseClass):
     This class is for documentation when a habit has been completed or failed
     to be completed in time.
 
-    ----- Attributes - onyl if not empty -----
+    ----- Attributes -----
     habit_id (int):                 This is an id that is used to be the
                                     primary_key. It increments automatically.
     habit_key (str):                This is the ForeignKey to the other table
                                     and represents the name of the
                                     corresponding habit.
-    fail_or_conpletion_date_time
+    fail_or_completion_date_time
     (datetime):                     This documents the date and time when a
                                     habit has been completed or missed to be
                                     completed in time.
@@ -149,18 +126,11 @@ class HabitHistory(BaseClass):
 
     __tablename__ = "habithistory"
 
-    # ----------------------------------------
-    # Defining each column in the habit table.
-    # region ----------------------------------------
-
     habit_id = sqla_Column(
         "entry_id", sqla_Integer, primary_key=True, autoincrement=True
     )
     habit_key = sqla_Column(
-        "habit_key",
-        sqla_String,
-        sqla_ForeignKey("habit.habit_name"),
-        nullable=False
+        "habit_key", sqla_String, sqla_ForeignKey("habit.habit_name"), nullable=False
     )
     fail_or_completion_date_time = sqla_Column(
         "fail_or_completion_date_time", sqla_DateTime
@@ -168,9 +138,6 @@ class HabitHistory(BaseClass):
     corresponding_due_date = sqla_Column("corresponding_due_date", sqla_Date)
     type_of_completion = sqla_Column("type_of_completion", sqla_Boolean)
 
-    # endregion
-
-    # Constructor
     def __init__(
         self,
         habit_key,
@@ -181,11 +148,11 @@ class HabitHistory(BaseClass):
         """
         Initialize a new habit history object.
 
-        ----- Arguments - onyl if not empty -----
+        ----- Arguments -----
         habit_key (str):                This is the ForeignKey to the other
                                         table and represents the name of the
                                         corresponding habit.
-        fail_or_conpletion_date_time
+        fail_or_completion_date_time
         (datetime):                     This documents the date and time when a
                                         habit has been completed or missed to
                                         be completed in time.
@@ -199,6 +166,3 @@ class HabitHistory(BaseClass):
         self.fail_or_completion_date_time = fail_or_completion_date_time
         self.corresponding_due_date = corresponding_due_date
         self.type_of_completion = type_of_completion
-
-
-# endregion
