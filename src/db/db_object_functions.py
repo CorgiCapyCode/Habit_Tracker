@@ -35,24 +35,11 @@ streak_calculator:              This function is used to calculate the current
                                 and highscore streak and adjusts the values of
                                 the object.
 """
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
 
-# Standard library imports
 import datetime
 
-# Related third party imports
-
-# Import from other modules
-from db_filter_functions import filter_db_for_names
-from db_history_functions import create_new_history_entry
-
-# endregion
-
-# ----------------------------------------
-# Indirect functions
-# region ----------------------------------------
+from db.db_filter_functions import filter_db_for_names
+from db.db_history_functions import create_new_history_entry
 
 
 # change_active_passiv_status
@@ -307,8 +294,7 @@ def streak_calculator(session, habit_object):
     habit_object (Habit):   A habit object that will be changed.
     """
     habit_object.habit_current_streak = habit_object.habit_current_streak + 1
-    if habit_object.habit_current_streak > habit_object.habit_highscore_streak:
-        habit_object.habit_highscore_streak = habit_object.habit_current_streak
+    habit_object.habit_highscore_streak = max(habit_object.habit_highscore_streak, habit_object.habit_current_streak)
     session.commit()
 
 # endregion

@@ -10,39 +10,22 @@ using a simple input line.
 Afterwards the MainWindow instance will be created.
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
-
-# Related third party imports
-
-# Import from other modules
-from db_functions import add_standard_habits_to_db
-from db_setup import start_db, start_db_session
-from db_standard_entries import (
+from db.db_functions import add_standard_habits_to_db
+from db.db_setup import start_db, start_db_session
+from db.db_standard_entries import (
     standard_habit_active_status,
     standard_habit_description,
     standard_habit_name,
     standard_habit_period,
 )
-from main_window import MainWindow
-from pop_up_windows import InputMessageWindow
+from ui.main_window import MainWindow
+from ui.pop_up_windows import InputMessageWindow
 from update_loop import loop_for_update_due_date
-# endregion
 
-# ----------------------------------------
-# Main
-# region ----------------------------------------
 
-if __name__ == "__main__":
+def main():
     engine = start_db(log=False)
     session = start_db_session(engine=engine)
-
-    # ----------------------------------------
-    # Adding standard habits.
-    # region ----------------------------------------
 
     input_for_standard_habits = input(
         "If you want to add the standard values type: yes\n"
@@ -57,12 +40,12 @@ if __name__ == "__main__":
         )
         InputMessageWindow(message_codes=status_add_standard_habits)
 
-    # endregion
-
     app = MainWindow(session=session)
     app.main_root.after(
         0, lambda: loop_for_update_due_date(session=session, main_window=app)
     )
     app.main_root.mainloop()
 
-# endregion
+
+if __name__ == "__main__":
+    main()

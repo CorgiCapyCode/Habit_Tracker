@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+venv/
+
+# uv
+.uv/
+
+# Environment variables
+.env
+.env.*
+
+# Type checking
+.mypy_cache/
+
+# Ruff
+.ruff_cache/

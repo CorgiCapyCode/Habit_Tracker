@@ -18,21 +18,10 @@ modify_existing_object_in_db:   After modifing some values of an existing
                                 objects.
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
-from typing import Union
-# Related third party imports
-
-# Import from other modules
-from db_filter_functions import filter_db_for_names
-from db_history_functions import delete_history_entries
-from db_object_functions import manage_active_passiv_status
+from db.db_filter_functions import filter_db_for_names
+from db.db_history_functions import delete_history_entries
+from db.db_object_functions import manage_active_passiv_status
 from habit_classes import Habit
-
-# endregion
 
 # ----------------------------------------
 # Functions

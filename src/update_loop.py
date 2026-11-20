@@ -24,25 +24,11 @@ count_fails_up:             This function counts up the fails, when the due
                             complete (tracking_status = True)
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import datetime
 
-# Related third party imports
-
-# Import from other modules
-from db_history_functions import create_new_history_entry
-from db_object_functions import reset_current_streak, reset_tracking_status
+from db.db_history_functions import create_new_history_entry
+from db.db_object_functions import reset_current_streak, reset_tracking_status
 from habit_classes import Habit
-
-# endregion
-
-# ----------------------------------------
-# Functions
-# region ----------------------------------------
 
 
 # loop_for_update_due_date

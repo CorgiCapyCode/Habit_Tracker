@@ -9,20 +9,10 @@ habits to the application, or to modify existing ones.
 CreateChangeHabitWindow:    This is the class to create the change/add habit
 window based on Tkinter.
 """
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import tkinter as tk
 
-# Related third party imports
-
-# Import from other modules
-from db_functions import add_new_entry_to_db, modify_existing_object_in_db
-from pop_up_windows import InputMessageWindow
-
-# endregion
+from db.db_functions import add_new_entry_to_db, modify_existing_object_in_db
+from ui.pop_up_windows import InputMessageWindow
 
 
 # Class CreateChangeHabitWindow
@@ -149,9 +139,7 @@ class CreateChangeHabitWindow:
 
         self.period_option_lst = ["Daily", "Every Other Day", "Weekly"]
         self.period_variable = tk.StringVar(self.create_change_root)
-        if self.create_new_habit_flag:
-            self.period_variable.set(self.period_option_lst[0])
-        elif self.habit_object.habit_period == 1:
+        if self.create_new_habit_flag or self.habit_object.habit_period == 1:
             self.period_variable.set(self.period_option_lst[0])
         elif self.habit_object.habit_period == 2:
             self.period_variable.set(self.period_option_lst[1])
@@ -521,13 +509,13 @@ class CreateChangeHabitWindow:
         """
         period = self.period_variable.get()
         if period == self.period_option_lst[0]:
-            period = int(1)
+            period = 1
         elif period == self.period_option_lst[1]:
-            period = int(2)
+            period = 2
         elif period == self.period_option_lst[2]:
-            period = int(7)
+            period = 7
         else:
-            period = int(1)
+            period = 1
         return period
 
     # endregion

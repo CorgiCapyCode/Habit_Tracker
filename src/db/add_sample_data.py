@@ -9,22 +9,13 @@ add_sample_data_to_habits:
 add_sample_entries_to_history:
 '''
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import datetime
-from random import randint as rint
 import sys
-# Related third party imports
+from random import randint as rint
 
-# Import from other modules
-from db_functions import add_new_entry_to_db
-from db_setup import start_db, start_db_session
+from db.db_functions import add_new_entry_to_db
+from db.db_setup import start_db, start_db_session
 from habit_classes import Habit, HabitHistory
-
-# endregion
 
 # ----------------------------------------
 # Functions

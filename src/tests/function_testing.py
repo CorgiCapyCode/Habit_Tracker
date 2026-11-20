@@ -37,26 +37,14 @@ filter_db_for_names                 This is a simple filtering for names using S
 search_for_highscore_in_db          This is a simple search for a value in a specific column using SQLAlchemy. No testing needed.
 filter_for_highscore_objects_in_db  This is a simple search for a value in a specific column using SQLAlchemy. No testing needed.
 """
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-# Standard library imports
+
 import unittest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
 
-# Related third party imports
-
-# Import from other modules
-from db_filter_functions import *
-from db_functions import *
-from db_object_functions import *
-from db_history_functions import *
-
-# endregion
-
-# ----------------------------------------
-# Test module db_functions.
-# region ----------------------------------------
+from db.db_filter_functions import *
+from db.db_functions import *
+from db.db_history_functions import *
+from db.db_object_functions import *
 
 
 # TestAddNewEntryToDb
@@ -66,9 +54,9 @@ class TestAddNewEntryToDb(unittest.TestCase):
         self.session = Mock()
 
     def test_correct_data(self):
-        name = str("Test Habit")
-        description = str("Test Description")
-        period = int(17)
+        name = "Test Habit"
+        description = "Test Description"
+        period = 17
         active_status = True
 
         # Setting the search for check_name in the function to None to simulate that there is none such entry.
@@ -79,9 +67,9 @@ class TestAddNewEntryToDb(unittest.TestCase):
         self.assertEqual(return_value, [0])
 
     def test_integer_for_description_and_name(self):
-        name = int(17)
-        description = int(17)
-        period = int(5)
+        name = 17
+        description = 17
+        period = 5
         active_status = True
 
         # Setting the search for check_name in the function to None to simulate that there is none such entry.
@@ -92,10 +80,10 @@ class TestAddNewEntryToDb(unittest.TestCase):
         self.assertEqual(return_value, [100, 101, 0])
 
     def test_all_integer_input(self):
-        name = int(17)
-        description = int(17)
-        period = int(5)
-        active_status = int(17)
+        name = 17
+        description = 17
+        period = 5
+        active_status = 17
 
         # Setting the search for check_name in the function to None to simulate that there is no such entry.
         self.session.query.return_value.filter_by.return_value.first.return_value = None
@@ -105,10 +93,10 @@ class TestAddNewEntryToDb(unittest.TestCase):
         self.assertEqual(return_value, [112])
 
     def test_all_string_input(self):
-        name = str("Test")
-        description = str("Test")
-        period = str("Test")
-        active_status = str("Test")
+        name = "Test"
+        description = "Test"
+        period = "Test"
+        active_status = "Test"
 
         # Setting the search for check_name in the function to None to simulate that there is no such entry.
         self.session.query.return_value.filter_by.return_value.first.return_value = None

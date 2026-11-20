@@ -7,23 +7,14 @@ ShowHighscoreWindow:    Class to open a window that shows the habits with the
 InputMessageWindow:     Class to open a window to give the user feedback about
                         warnings and errors.
 """
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
 
-# Standard library imports
 import tkinter as tk
 from tkinter import ttk
 
-# Related third party imports
-
-# Import from other modules
-from db_filter_functions import (
+from db.db_filter_functions import (
     filter_for_highscore_objects_in_db,
     search_for_highscore_in_db,
 )
-
-# endregion
 
 
 # Class ShowHighscoreWindow

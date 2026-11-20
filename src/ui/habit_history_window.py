@@ -6,20 +6,11 @@ ShowHabitHistory:   Representation of a window that shows all habit history
                     entries.
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
 
-# Standard library imports
 import tkinter as tk
 from tkinter import ttk
 
-# Related third party imports
-
-# Import from other modules
-from db_filter_functions import filter_for_history_entries
-
-# endregion
+from db.db_filter_functions import filter_for_history_entries
 
 
 # Class ShowHabitHistory
@@ -309,12 +300,7 @@ class ShowHabitHistory:
         ----- Returns -----
         boolean (bool):   Returns True or False
         """
-        if (P.isdigit() is True) or P == "":
-            return True
-        elif P == "":
-            return True
-        else:
-            return False
+        return bool(P.isdigit() is True or P == "" or P == "")
 
     # load_history_data_to_table
     def load_history_data_to_table(self):

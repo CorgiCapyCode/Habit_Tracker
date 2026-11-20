@@ -20,21 +20,12 @@ filter_for_highscore_objects_in_db: Used to filter for the highscore value.
 filter_for_history_entries:         Filters for history entries according to
                                     the settings in the window.
 """
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
 
-# Standard library imports
 import datetime
-from typing import Optional
 
-# Related third party imports
 from sqlalchemy import and_ as sqla_and_
 
-# Import from other modules
 from habit_classes import Habit, HabitHistory
-
-# endregion
 
 # ----------------------------------------
 # Functions
@@ -43,7 +34,7 @@ from habit_classes import Habit, HabitHistory
 
 # filter_habits
 def filter_habits(
-    session, period_filter: Optional[int] = None, active_filter: int = 0
+    session, period_filter: int | None = None, active_filter: int = 0
 ) -> list[Habit]:
     """
     Filtering habits based on filter options.

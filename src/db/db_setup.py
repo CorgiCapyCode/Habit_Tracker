@@ -1,5 +1,4 @@
-"""
-This module contains the basis for the database.
+""" This module contains the basis for the database.
 
 ----- Description -----
 
@@ -17,38 +16,15 @@ start_db_session:   Starts the session that can be used to interact with the
                     database.
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import os
 
-# Related third party imports
 from sqlalchemy import create_engine as sqla_create_engine
-from sqlalchemy.ext.declarative import \
-    declarative_base as sqla_declarative_base
+from sqlalchemy.ext.declarative import declarative_base as sqla_declarative_base
 from sqlalchemy.orm import sessionmaker as sqla_sessionmaker
 
-# Import from other modules
-
-# endregion
-
-# ----------------------------------------
-# Classes
-# region ----------------------------------------
-
-# BaseClass
 BaseClass = sqla_declarative_base()
 
-# endregion
 
-# ----------------------------------------
-# Functions
-# region ----------------------------------------
-
-
-# start_database()
 def start_db(log: bool = False):
     """
     Starts the database and creates one, if not existing
@@ -71,7 +47,6 @@ def start_db(log: bool = False):
     return engine
 
 
-# start_session()
 def start_db_session(engine):
     """
     Starts a session based on the engine
@@ -85,6 +60,3 @@ def start_db_session(engine):
     Session = sqla_sessionmaker(engine)
     session = Session()
     return session
-
-
-# endregion

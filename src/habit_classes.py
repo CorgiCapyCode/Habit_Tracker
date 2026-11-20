@@ -12,14 +12,8 @@ HabitHistory:   This class is a representation of the history behind a habit.
 Both classes have the BaseClass as a parent.
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import datetime
 
-# Related third party imports
 from sqlalchemy import Boolean as sqla_Boolean
 from sqlalchemy import Column as sqla_Column
 from sqlalchemy import Date as sqla_Date
@@ -28,14 +22,7 @@ from sqlalchemy import ForeignKey as sqla_ForeignKey
 from sqlalchemy import Integer as sqla_Integer
 from sqlalchemy import String as sqla_String
 
-# Import from other modules
-from db_setup import BaseClass
-
-# endregion
-
-# ----------------------------------------
-# Classes
-# region ----------------------------------------
+from db.db_setup import BaseClass
 
 
 # Class Habit

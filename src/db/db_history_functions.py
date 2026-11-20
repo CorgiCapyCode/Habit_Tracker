@@ -8,16 +8,8 @@ delete_history_entries:     Deleting entries from the database table
                             habithistory.
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import datetime
 
-# Related third party imports
-
-# Import from other modules
 from habit_classes import HabitHistory
 
 # endregion

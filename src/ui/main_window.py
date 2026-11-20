@@ -9,28 +9,16 @@ application using tkinter.
 MainWindow
 """
 
-# ----------------------------------------
-# Imports
-# region ----------------------------------------
-
-# Standard library imports
 import sys
 import tkinter as tk
 from tkinter import ttk
 
-# Related third party imports
-
-# Import from other modules
-from create_new_change_habit_window import CreateChangeHabitWindow
-from db_filter_functions import filter_db_for_names, filter_habits
-from db_functions import delete_entries_from_db
-from db_object_functions import (
-    change_active_passiv_status, manage_tracking_status
-)
-from habit_history_window import ShowHabitHistory
-from pop_up_windows import InputMessageWindow, ShowHighscoreWindow
-
-# endregion
+from db.db_filter_functions import filter_db_for_names, filter_habits
+from db.db_functions import delete_entries_from_db
+from db.db_object_functions import change_active_passiv_status, manage_tracking_status
+from ui.create_new_change_habit_window import CreateChangeHabitWindow
+from ui.habit_history_window import ShowHabitHistory
+from ui.pop_up_windows import InputMessageWindow, ShowHighscoreWindow
 
 
 # Class MainWindow
